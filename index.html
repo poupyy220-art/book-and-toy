@@ -43,7 +43,7 @@ html, body {
   background: var(--cream);
   color: var(--text-main);
   overflow-x: hidden;
-  /* 移除 height:100%，改用 min-height 讓 iPhone Safari 可以正常捲動 */
+  min-height: 100vh;
 }
 
 body {
@@ -57,13 +57,11 @@ body {
 /* ── 頁面切換容器 ──────────────────────────────────────── */
 .screen {
   display: none;
-  min-height: 100svh; /* svh = small viewport height，iPhone Safari 安全高度 */
+  min-height: 100vh;
   animation: fadeSlideIn .4s ease both;
 }
 .screen.active {
   display: flex; flex-direction: column;
-  overflow-y: auto; /* 讓每個 screen 自己可以捲動 */
-  -webkit-overflow-scrolling: touch;
 }
 
 @keyframes fadeSlideIn {
@@ -688,6 +686,183 @@ body {
   font-family: inherit; cursor: pointer;
 }
 
+/* ── 主畫面分析卡片 ──────────────────────────────────── */
+.home-analysis-wrap { padding: 0 24px; display: flex; flex-direction: column; gap: 12px; margin-bottom: 8px; }
+.home-section-card {
+  background: var(--white); border-radius: var(--radius-md);
+  padding: 16px 18px; box-shadow: var(--shadow-sm);
+}
+.home-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.home-section-title { font-size: 14px; font-weight: 900; color: var(--text-main); }
+.home-section-sub   { font-size: 11px; color: var(--text-soft); font-weight: 700; }
+.btn-text-sm {
+  font-size: 12px; font-weight: 800; color: var(--lav-dark);
+  background: none; border: none; cursor: pointer; font-family: inherit;
+  padding: 4px 8px; border-radius: var(--radius-sm);
+}
+.btn-text-sm:hover { background: rgba(164,144,208,.12); }
+.btn-text-sm:disabled { opacity: .4; cursor: not-allowed; }
+
+/* 能力分布橫條 */
+.skill-dist-list { display: flex; flex-direction: column; gap: 6px; }
+.skill-row { display: flex; align-items: center; gap: 8px; }
+.skill-row-label {
+  font-size: 11px; font-weight: 800; color: var(--text-mid);
+  min-width: 60px; text-align: right; flex-shrink: 0;
+}
+.skill-bar-wrap {
+  flex: 1; height: 10px; background: var(--cream-dark);
+  border-radius: 100px; overflow: hidden;
+}
+.skill-bar-fill {
+  height: 100%; border-radius: 100px;
+  transition: width .5s cubic-bezier(.34,1.56,.64,1);
+  /* 顏色沿用 dev-chip 的背景，改成 border 顏色 */
+}
+.skill-bar-fill.chip-gross_motor    { background: var(--sky-dark); }
+.skill-bar-fill.chip-fine_motor     { background: var(--lav-dark); }
+.skill-bar-fill.chip-cognitive      { background: var(--peach-dark); }
+.skill-bar-fill.chip-symbolic_play  { background: #D4A017; }
+.skill-bar-fill.chip-social         { background: var(--coral-dark); }
+.skill-bar-fill.chip-sensory        { background: var(--sage-dark); }
+.skill-bar-fill.chip-creativity     { background: #C06000; }
+.skill-bar-fill.chip-language_input { background: #1A6B85; }
+.skill-bar-fill.chip-language_output{ background: #0F4F62; }
+.skill-bar-fill.chip-word_mapping   { background: #5530A0; }
+.skill-bar-fill.chip-social_language{ background: #9B2020; }
+.skill-row-count { font-size: 12px; font-weight: 900; color: var(--text-soft); min-width: 18px; }
+
+/* 能力缺口 */
+.weak-skill-list { display: flex; flex-direction: column; gap: 8px; }
+.weak-chip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: var(--radius-sm);
+  background: rgba(255,138,128,.08); border: 1px solid rgba(255,138,128,.2);
+}
+.weak-icon { font-size: 16px; flex-shrink: 0; }
+.weak-name  { font-size: 13px; font-weight: 800; color: var(--text-main); }
+.weak-count { font-size: 11px; color: var(--text-soft); font-weight: 700; }
+
+/* 推薦購買 */
+.rec-reason { font-size: 13px; color: var(--text-mid); font-weight: 600; line-height: 1.6; margin-bottom: 10px; }
+.rec-directions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.rec-dir-chip {
+  padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 800;
+  background: rgba(201,184,232,.3); color: var(--lav-dark);
+  border: 1.5px solid rgba(164,144,208,.4);
+}
+.rec-items { display: flex; flex-direction: column; gap: 6px; }
+.rec-item-row { font-size: 13px; font-weight: 700; color: var(--text-main); padding: 6px 0; }
+
+/* 月報 */
+.report-summary {
+  font-size: 14px; color: var(--text-main); font-weight: 700;
+  line-height: 1.65; margin-bottom: 12px; padding: 10px 14px;
+  background: rgba(184,216,176,.15); border-radius: var(--radius-sm);
+}
+.report-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.report-col { padding: 10px; border-radius: var(--radius-sm); }
+.report-col.strength { background: rgba(184,216,176,.15); }
+.report-col.weakness { background: rgba(255,203,164,.12); }
+.report-col-title { font-size: 12px; font-weight: 800; color: var(--text-soft); margin-bottom: 6px; }
+.report-suggestion {
+  font-size: 13px; font-weight: 700; color: var(--text-mid); line-height: 1.6;
+  padding: 10px 14px; background: rgba(168,216,234,.15); border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
+.report-next {
+  font-size: 12px; font-weight: 700; color: var(--text-soft);
+  padding: 8px 12px; background: var(--cream-dark); border-radius: var(--radius-sm);
+}
+
+/* 重複購買分析 */
+.repeat-bar {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 11px 14px; border-radius: var(--radius-sm);
+  margin-bottom: 8px; font-size: 13px;
+}
+.repeat-bar.high  { background: rgba(255,138,128,.15); border: 1.5px solid rgba(255,138,128,.35); }
+.repeat-bar.mid   { background: rgba(255,217,125,.15); border: 1.5px solid rgba(255,217,125,.4); }
+.repeat-bar.low   { background: rgba(184,216,176,.15); border: 1.5px solid rgba(140,192,132,.35); }
+.repeat-icon  { font-size: 18px; flex-shrink: 0; }
+.repeat-body  { display: flex; flex-direction: column; gap: 3px; }
+.repeat-label { font-weight: 900; color: var(--text-main); }
+.repeat-with  { font-size: 12px; color: var(--text-mid); font-weight: 600; }
+.alt-suggestion {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  background: rgba(201,184,232,.15);
+}
+.alt-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+.alt-dir { font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; }
+.alt-examples { display: flex; flex-wrap: wrap; gap: 5px; }
+
+/* ── 發展分析區塊 ──────────────────────────────────── */
+.dev-section-label {
+  font-size: 12px; font-weight: 800; color: var(--text-soft);
+  letter-spacing: .08em; text-transform: uppercase;
+  margin: 14px 0 8px;
+}
+.dev-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.dev-chip {
+  padding: 4px 12px; border-radius: 100px;
+  font-size: 12px; font-weight: 800; border: 1.5px solid transparent;
+}
+.chip-gross_motor    { background: rgba(168,216,234,.3); color: var(--sky-dark);   border-color: rgba(107,189,214,.4); }
+.chip-fine_motor     { background: rgba(201,184,232,.3); color: var(--lav-dark);   border-color: rgba(164,144,208,.4); }
+.chip-cognitive      { background: rgba(255,203,164,.3); color: var(--peach-dark); border-color: rgba(245,168,122,.4); }
+.chip-symbolic_play  { background: rgba(255,217,125,.3); color: #B8860B;           border-color: rgba(255,217,125,.6); }
+.chip-social         { background: rgba(255,138,128,.2); color: var(--coral-dark); border-color: rgba(255,138,128,.4); }
+.chip-sensory        { background: rgba(184,216,176,.3); color: var(--sage-dark);  border-color: rgba(140,192,132,.4); }
+.chip-creativity     { background: rgba(245,168,122,.2); color: #C06000;           border-color: rgba(245,168,122,.4); }
+.chip-language_input { background: rgba(107,189,214,.2); color: #1A6B85;           border-color: rgba(107,189,214,.4); }
+.chip-language_output{ background: rgba(107,189,214,.3); color: #0F4F62;           border-color: rgba(107,189,214,.5); }
+.chip-word_mapping   { background: rgba(164,144,208,.2); color: #5530A0;           border-color: rgba(164,144,208,.4); }
+.chip-social_language{ background: rgba(255,138,128,.15);color: #9B2020;           border-color: rgba(255,138,128,.3); }
+
+.fit-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 800;
+}
+.fit-bar.simple  { background: rgba(168,216,234,.2); color: var(--sky-dark); }
+.fit-bar.mid     { background: rgba(184,216,176,.2); color: var(--sage-dark); }
+.fit-bar.advance { background: rgba(255,203,164,.2); color: var(--peach-dark); }
+
+.play-level-card {
+  border-radius: var(--radius-sm);
+  padding: 12px 14px; margin-bottom: 8px;
+  border-left: 4px solid transparent;
+}
+.play-level-card.l1 { background: rgba(184,216,176,.15); border-left-color: var(--sage-dark); }
+.play-level-card.l2 { background: rgba(168,216,234,.15); border-left-color: var(--sky-dark); }
+.play-level-card.l3 { background: rgba(201,184,232,.15); border-left-color: var(--lav-dark); }
+.play-lv-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 100px;
+  font-size: 11px; font-weight: 900; margin-bottom: 4px; letter-spacing: .05em;
+}
+.l1 .play-lv-badge { background: var(--sage-dark); color: var(--white); }
+.l2 .play-lv-badge { background: var(--sky-dark);  color: var(--white); }
+.l3 .play-lv-badge { background: var(--lav-dark);  color: var(--white); }
+.play-lv-title { font-size: 12px; font-weight: 800; color: var(--text-mid); margin-bottom: 6px; }
+.play-lv-text  { font-size: 13px; font-weight: 600; color: var(--text-main); line-height: 1.65; }
+
+.buy-verdict-bar {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  font-size: 13px; line-height: 1.6;
+}
+.buy-verdict-bar.buy   { background: rgba(184,216,176,.2); color: #1A5C38; border: 1.5px solid rgba(140,192,132,.4); }
+.buy-verdict-bar.maybe { background: rgba(255,217,125,.15);color: #7D5A00; border: 1.5px solid rgba(255,217,125,.5); }
+.buy-verdict-bar.skip  { background: rgba(200,200,200,.15);color: var(--text-mid); border: 1.5px solid var(--cream-dark); }
+.buy-verdict-icon  { font-size: 20px; flex-shrink: 0; }
+.buy-verdict-body  { display: flex; flex-direction: column; gap: 3px; }
+.buy-verdict-label { font-weight: 900; font-size: 14px; }
+.buy-verdict-reason{ font-weight: 600; }
+
 /* ── 導讀 tip 區塊 */
 .ai-tip {
   width: 100%; margin-top: 10px;
@@ -837,6 +1012,95 @@ body {
 .nav-item.active .nav-label  { color: var(--coral-dark); }
 .nav-item.active .nav-icon   { transform: scale(1.15); }
 
+/* ── 設定頁 CSS ──────────────────────────────────────── */
+.settings-card {
+  background: var(--white); border-radius: var(--radius-md);
+  padding: 20px; box-shadow: var(--shadow-sm);
+}
+.settings-card.highlight {
+  border: 2px solid rgba(245,168,122,.4);
+  background: rgba(255,248,240,.8);
+}
+.settings-card.danger-zone { border: 1.5px solid rgba(255,138,128,.3); }
+
+.settings-section-title {
+  font-size: 13px; font-weight: 900; color: var(--text-main);
+  margin-bottom: 12px; letter-spacing: .02em;
+}
+.settings-desc {
+  font-size: 13px; color: var(--text-mid); font-weight: 600;
+  line-height: 1.65; margin-bottom: 14px;
+}
+.settings-info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--cream-dark);
+  font-size: 14px;
+}
+.settings-info-row:last-of-type { border-bottom: none; }
+.settings-info-label { color: var(--text-soft); font-weight: 700; }
+.settings-info-val   { color: var(--text-main); font-weight: 800; }
+
+/* 引導步驟 */
+.guide-steps {
+  display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;
+}
+.guide-step {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13px; color: var(--text-mid); font-weight: 600; line-height: 1.55;
+}
+.guide-step-num {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  background: var(--peach-dark); color: var(--white);
+  font-size: 11px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 1px;
+}
+.guide-step code {
+  background: var(--cream-dark); padding: 1px 6px;
+  border-radius: 4px; font-size: 12px;
+}
+
+/* 設定動作按鈕 */
+.btn-setting-action {
+  width: 100%; padding: 14px;
+  border: 2px solid var(--cream-dark); border-radius: var(--radius-md);
+  background: var(--cream); color: var(--text-main);
+  font-size: 14px; font-weight: 900; font-family: inherit;
+  cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-setting-action:hover { border-color: var(--peach-dark); background: rgba(255,203,164,.15); }
+.btn-setting-action.primary {
+  background: linear-gradient(135deg, var(--peach-dark), var(--coral));
+  border-color: transparent; color: var(--white);
+  box-shadow: 0 6px 20px rgba(245,168,122,.35);
+}
+.btn-setting-action.primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(245,168,122,.45); }
+.btn-setting-action.danger {
+  border-color: rgba(255,138,128,.4); color: var(--coral-dark);
+  background: rgba(255,138,128,.06);
+}
+.btn-setting-action.danger:hover { background: rgba(255,138,128,.14); }
+
+/* 使用說明手風琴 */
+.how-to-list { display: flex; flex-direction: column; gap: 0; }
+.how-to-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 13px 0; cursor: pointer;
+  font-size: 14px; font-weight: 700; color: var(--text-main);
+  border-bottom: 1px solid var(--cream-dark);
+  user-select: none;
+}
+.how-to-item:last-of-type { border-bottom: none; }
+.how-arrow { font-size: 12px; color: var(--text-soft); transition: transform .2s; }
+.how-to-body {
+  display: none; padding: 0 0 14px;
+  font-size: 13px; color: var(--text-mid);
+  font-weight: 600; line-height: 1.65;
+  border-bottom: 1px solid var(--cream-dark);
+}
+.how-to-body.open { display: block; }
+
 /* ── 響應式：桌機優化 ───────────────────────────────── */
 @media (min-width: 680px) {
   .main-header, .bottom-nav, #screen-main, #screen-add, #screen-detail {
@@ -969,6 +1233,60 @@ body {
       <div class="stat-num" id="stat-unsafe">0</div>
       <div class="stat-label">🚫 不適合</div>
     </div>
+  </div>
+
+  <!-- 能力分布 & 缺口 & 推薦（主畫面）-->
+  <div class="home-analysis-wrap" id="home-analysis-wrap">
+
+    <!-- 能力分布 -->
+    <div class="home-section-card" id="skill-dist-section">
+      <div class="home-section-header">
+        <span class="home-section-title">📊 能力分布</span>
+        <span class="home-section-sub" id="skill-total-count"></span>
+      </div>
+      <div id="skill-dist-list" class="skill-dist-list"></div>
+    </div>
+
+    <!-- 能力缺口 -->
+    <div class="home-section-card" id="weak-section">
+      <div class="home-section-header">
+        <span class="home-section-title">⚠️ 能力缺口</span>
+        <span class="home-section-sub">最少涵蓋的能力</span>
+      </div>
+      <div id="weak-skill-list" class="weak-skill-list"></div>
+    </div>
+
+    <!-- 推薦購買 -->
+    <div class="home-section-card" id="recommend-section" style="display:none">
+      <div class="home-section-header">
+        <span class="home-section-title">💡 AI 推薦購買</span>
+        <button class="btn-text-sm" id="btn-refresh-rec" onclick="fetchRecommendations()">🔄 更新</button>
+      </div>
+      <div id="recommend-wrap"></div>
+    </div>
+
+    <!-- 每月發展報告 -->
+    <div class="home-section-card" id="monthly-report-section" style="display:none">
+      <div class="home-section-header">
+        <span class="home-section-title">📋 每月發展報告</span>
+        <button class="btn-text-sm" id="btn-monthly-report" onclick="fetchMonthlyReport()">🔄 重新產生</button>
+      </div>
+      <div id="monthly-report-wrap"></div>
+    </div>
+
+    <!-- 產生報告 CTA（初次）-->
+    <div class="home-section-card" id="report-cta-section" style="display:none">
+      <div style="text-align:center;padding:8px 0">
+        <div style="font-size:13px;color:var(--text-soft);font-weight:700;margin-bottom:12px">
+          已累積 <span id="report-item-count">0</span> 筆記錄，可以產生發展報告了
+        </div>
+        <button class="btn-analyze" style="width:auto;padding:12px 28px"
+                onclick="fetchMonthlyReport();fetchRecommendations();document.getElementById('report-cta-section').style.display='none'">
+          📋 產生本月發展報告
+        </button>
+      </div>
+    </div>
+
   </div>
 
   <!-- 快速新增 FAB -->
@@ -1114,6 +1432,48 @@ body {
       </div>
       <div class="ai-text" id="ai-text-content">-</div>
       <div class="concern-list" id="concern-list"></div>
+
+      <!-- 重複購買分析 -->
+      <div id="repeat-analysis-wrap" style="display:none"></div>
+
+      <!-- 發展能力標籤列 -->
+      <div id="dev-abilities-row" style="display:none">
+        <div class="dev-section-label">🧠 核心發展能力</div>
+        <div class="dev-chips" id="dev-chips"></div>
+      </div>
+
+      <!-- 適配程度 -->
+      <div id="fit-level-row" style="display:none">
+        <div class="dev-section-label">🎯 發展適配度</div>
+        <div class="fit-bar" id="fit-bar"></div>
+      </div>
+
+      <!-- 分階玩法 -->
+      <div id="play-levels" style="display:none">
+        <div class="dev-section-label">🎮 分階玩法指南</div>
+        <div class="play-level-card l1" id="play-l1-card">
+          <div class="play-lv-badge">Lv.1</div>
+          <div class="play-lv-title">目前玩法</div>
+          <div class="play-lv-text" id="play-l1-text"></div>
+        </div>
+        <div class="play-level-card l2" id="play-l2-card">
+          <div class="play-lv-badge">Lv.2</div>
+          <div class="play-lv-title">引導玩法</div>
+          <div class="play-lv-text" id="play-l2-text"></div>
+        </div>
+        <div class="play-level-card l3" id="play-l3-card">
+          <div class="play-lv-badge">Lv.3</div>
+          <div class="play-lv-title">進階玩法</div>
+          <div class="play-lv-text" id="play-l3-text"></div>
+        </div>
+      </div>
+
+      <!-- 購買建議 -->
+      <div id="buy-verdict-row" style="display:none">
+        <div class="dev-section-label">🛒 購買建議</div>
+        <div class="buy-verdict-bar" id="buy-verdict-bar"></div>
+      </div>
+
       <!-- 免責聲明（固定顯示）-->
       <div class="disclaimer">
         ⚠️ AI 判斷僅供參考，實際安全性請家長親自確認<br>
@@ -1189,18 +1549,20 @@ const LS_ITEMS_KEY = 'toy_items_cache'; // 本地快取
 
 // ── 狀態 ──────────────────────────────────────────
 let state = {
-  childId:     null,
-  token:       null,
-  childName:   null,
-  childDob:    null,  // "YYYY-MM-DD"
-  childAge:    null,  // calcAge() 物件
-  items:       [],
-  currentItem: null,
-  filter:      'all',
-  aiResult:    null,
+  childId:      null,
+  token:        null,
+  childName:    null,
+  childDob:     null,       // "YYYY-MM-DD"
+  childAge:     null,       // calcAge() 物件
+  items:        [],
+  currentItem:  null,
+  filter:       'all',
+  aiResult:     null,
   selectedType: null,
   selectedAge:  [],
-  selectedPhoto: null,   // { base64, mediaType } 選填
+  selectedPhoto: null,      // { base64, mediaType } 選填
+  skillScore:   {},         // 能力分布統計
+  weakSkills:   [],         // 能力缺口 Top 3
 };
 
 // ── UI 工具 ───────────────────────────────────────
@@ -1322,11 +1684,11 @@ async function fetchItems() {
     state.items = result.items;
     cacheItems(state.items);
   } else {
-    // 使用本地快取
     state.items = getCachedItems();
   }
   renderItemsList();
   updateStats();
+  refreshSkillStats(); // 更新能力統計
 }
 
 async function saveItem() {
@@ -1363,7 +1725,15 @@ async function saveItem() {
   showScreen('screen-main');
   renderItemsList();
   updateStats();
+  renderSkillStats();   // 即時更新能力統計
   resetAddForm();
+  // 達 3 筆時顯示 CTA
+  const ctaEl = document.getElementById('report-cta-section');
+  const cntEl = document.getElementById('report-item-count');
+  if (ctaEl && state.items.length >= 3) {
+    if (cntEl) cntEl.textContent = state.items.length;
+    ctaEl.style.display = 'block';
+  }
 }
 
 // ── AI 判斷（呼叫 Claude API）────────────────────
@@ -1391,42 +1761,81 @@ async function analyzeItem() {
   document.getElementById('btn-analyze').disabled = true;
 
   try {
+    // 整理已有玩具清單供 AI 分析重複度
+    const existingItems = state.items.slice(0, 20).map(i => ({
+      name:   i.item_name,
+      type:   i.category,
+      skills: safeParseAI(i.ai_result)?.core_skills || safeParseAI(i.ai_result)?.devAbilities || []
+    }));
+
     const promptText = `
-你是幼兒玩具與繪本安全評估專家，同時熟悉兒童發展心理學。
+你是一位「幼兒發展專家 + 購買決策顧問」，同時具備兒童安全評估專業。
 
-請依據以下精確月齡，判斷玩具/繪本的安全性與發展適切性，並回傳嚴格 JSON（不含任何 markdown）：
+# 任務
+針對新玩具，提供：安全判斷 + 分階玩法 + 重複購買分析 + 能力缺口 + 購買建議
 
-物品名稱：${name}
+---
+
+# 新玩具
+名稱：${name || '（請從圖片辨識）'}
 類型：${type === 'toy' ? '玩具' : '繪本'}
 包裝標示適用年齡：${ages}
-寶貝實際月齡：${ageStr}
 
-評估重點（依月齡調整）：
-- 0-6M：感官刺激、窒息風險、BPA/毒素、噪音分貝
-- 6-12M：抓握安全、站立穩定、咬食安全、爬行障礙
-- 1-2Y：小零件（<3.2cm）、尖角、繩索纏繞、語言啟蒙
-- 2-3Y：想像力發展、情緒主題適切性、創意材料安全
-- 3Y+：社交技能培養、認知挑戰程度、競爭心理影響
+# 孩子
+月齡：${ageStr}
+${ageInfo && ageInfo.totalMonths <= 6   ? '發展特徵：感官探索期，視覺追蹤、抓握反射' : ''}
+${ageInfo && ageInfo.totalMonths > 6  && ageInfo.totalMonths <= 12 ? '發展特徵：感覺動作期，物體恆存、模仿動作' : ''}
+${ageInfo && ageInfo.totalMonths > 12 && ageInfo.totalMonths <= 18 ? '發展特徵：學步初期，象徵思考萌芽、模仿強、大動作旺盛' : ''}
+${ageInfo && ageInfo.totalMonths > 18 && ageInfo.totalMonths <= 24 ? '發展特徵：學步後期，假扮遊戲、語言爆發、自我意識強' : ''}
+${ageInfo && ageInfo.totalMonths > 24 && ageInfo.totalMonths <= 36 ? '發展特徵：幼兒期，象徵遊戲豐富、語言快速發展' : ''}
+${ageInfo && ageInfo.totalMonths > 36 ? '發展特徵：學前期，創意想像、社交遊戲、邏輯萌芽' : ''}
 
-回傳格式（純 JSON，無多餘文字）：
+# 已有玩具（用於重複判斷）
+${JSON.stringify(existingItems)}
+
+---
+
+# 輸出（純 JSON，不含任何 markdown）
 {
   "verdict": "safe" | "caution" | "unsafe",
-  "score": "⭐⭐⭐⭐⭐（如 ⭐⭐⭐）",
-  "summary": "針對該月齡的一句話總結（20字內）",
-  "detail": "詳細說明，包含月齡適切性分析（120字內）",
+  "score": "⭐⭐⭐（1-5顆）",
+  "summary": "一句話總結（20字內）",
+  "detail": "安全說明含材質零件風險（80字內）",
   "ageMatch": "完全符合" | "略低" | "略高" | "不符合",
-  "concerns": ["具體注意事項1","具體注意事項2"]（最多3項，無則空陣列）,
-  "tip": "給爸媽的導讀或互動建議（50字內）",
+  "concerns": ["安全注意事項"（最多3項）],
+
+  "core_skills": ["fine_motor","cognitive"]（從以下選1~3：gross_motor/fine_motor/cognitive/symbolic_play/social/sensory/creativity/language_input/language_output/word_mapping/social_language）,
+
+  "fit_level": "偏簡單" | "適中" | "可進階",
+  "fit_reason": "適配原因（30字內）",
+
+  "level_1_play": ["目前孩子自己會做的具體玩法（2項）"],
+  "level_2_play": ["大人引導的具體步驟（2項）"],
+  "level_3_play": ["結合語言想像角色扮演（2項）"],
+
+  "repeat_score": 0~100（與已有玩具的重複程度），
+  "repeat_level": "高" | "中" | "低",
+  "repeat_with": ["重複的玩具名稱"（無則空陣列）],
+
+  "buy_advice": "值得購買" | "可選" | "不建議購買",
+  "buy_reason": "基於發展和已有玩具的理由（40字內）",
+
+  "alternative": {
+    "direction": "建議補充的能力方向（20字內）",
+    "example": ["替代玩具方向1","替代玩具方向2"]
+  },
+
+  "tip": "給爸媽的一句話提示（40字內）",
   "emoji": "最符合的單一 emoji",
-  "itemName": "從圖片辨識到的物品名稱（若已有文字輸入則忽略此欄）",
+  "itemName": "從圖片辨識到的名稱（有文字輸入則忽略）",
   "confidence": "高" | "中" | "低",
-  "confidenceReason": "信心度說明（圖片清晰/部分遮蔽/看不到標籤等，20字內）"
+  "confidenceReason": "信心度說明（20字內）"
 }
 
-重要規則：
-- 若圖片模糊、角度不佳、看不到安全標籤，confidence 必須填「低」或「中」
-- 若 confidence 為「低」，concerns 中必須加入「建議補充拍攝：[具體說明哪個角度]」
-- 若只有文字沒有圖片，confidence 填「中」並說明「依名稱文字判斷，未見實物」
+# 限制
+❌ 不可出現「提升想像力」「促進發展」等空泛詞彙
+✅ level_1/2/3_play 必須是可直接執行的具體動作
+✅ 若圖片不清晰，confidence 填「低」，concerns 加「建議補充拍攝：XX」
 `.trim();
 
     // 依有無圖片決定 messages 格式
@@ -1468,6 +1877,7 @@ async function analyzeItem() {
       document.getElementById('input-item-name').value = aiData.itemName;
     }
     renderAIResult(aiData);
+    renderRepeatAnalysis(aiData); // 重複購買分析
 
   } catch (err) {
     // Fallback Demo 結果
@@ -1550,6 +1960,76 @@ function renderAIResult(ai) {
   }).join('');
 
   concerns.innerHTML = ageMatchEl + concernsHtml + tipEl;
+
+  // ── 發展能力 chips ────────────────────────────────
+  const devRow   = document.getElementById('dev-abilities-row');
+  const devChips = document.getElementById('dev-chips');
+  const abilityLabel = {
+    gross_motor:     '大動作',    fine_motor:    '精細動作',
+    cognitive:       '認知思考',  symbolic_play: '象徵遊戲',
+    social:          '社交互動',  sensory:       '感官探索',
+    creativity:      '創意表達',  language_input:'語言輸入',
+    language_output: '語言輸出',  word_mapping:  '詞彙對應',
+    social_language: '社交語言'
+  };
+  if (ai.devAbilities && ai.devAbilities.length > 0) {
+    devChips.innerHTML = ai.devAbilities
+      .map(a => `<span class="dev-chip chip-${a}">${abilityLabel[a] || a}</span>`)
+      .join('');
+    devRow.style.display = 'block';
+  } else {
+    devRow.style.display = 'none';
+  }
+
+  // ── 適配程度 ──────────────────────────────────────
+  const fitRow = document.getElementById('fit-level-row');
+  const fitBar = document.getElementById('fit-bar');
+  if (ai.fitLevel) {
+    const fitMeta = {
+      '偏簡單': { cls: 'simple',  icon: '💤', label: '偏簡單' },
+      '適中':   { cls: 'mid',     icon: '✅', label: '適中'   },
+      '可進階': { cls: 'advance', icon: '🚀', label: '可進階' }
+    };
+    const fm = fitMeta[ai.fitLevel] || fitMeta['適中'];
+    fitBar.className = `fit-bar ${fm.cls}`;
+    fitBar.innerHTML = `<span>${fm.icon}</span><span><b>${fm.label}</b>　${esc(ai.fitReason || '')}</span>`;
+    fitRow.style.display = 'block';
+  } else {
+    fitRow.style.display = 'none';
+  }
+
+  // ── 分階玩法 ──────────────────────────────────────
+  const playLevels = document.getElementById('play-levels');
+  if (ai.play_l1 || ai.play_l2 || ai.play_l3) {
+    document.getElementById('play-l1-text').textContent = ai.play_l1 || '-';
+    document.getElementById('play-l2-text').textContent = ai.play_l2 || '-';
+    document.getElementById('play-l3-text').textContent = ai.play_l3 || '-';
+    playLevels.style.display = 'block';
+  } else {
+    playLevels.style.display = 'none';
+  }
+
+  // ── 購買建議 ──────────────────────────────────────
+  const buyRow = document.getElementById('buy-verdict-row');
+  const buyBar = document.getElementById('buy-verdict-bar');
+  if (ai.buyVerdict) {
+    const buyMeta = {
+      '值得購買': { cls: 'buy',   icon: '🛒', label: '值得購買' },
+      '可選':     { cls: 'maybe', icon: '🤔', label: '可選'     },
+      '不必要':   { cls: 'skip',  icon: '⏭️', label: '不必要'   }
+    };
+    const bm = buyMeta[ai.buyVerdict] || buyMeta['可選'];
+    buyBar.className = `buy-verdict-bar ${bm.cls}`;
+    buyBar.innerHTML = `
+      <span class="buy-verdict-icon">${bm.icon}</span>
+      <div class="buy-verdict-body">
+        <span class="buy-verdict-label">${bm.label}</span>
+        <span class="buy-verdict-reason">${esc(ai.buyReason || '')}</span>
+      </div>`;
+    buyRow.style.display = 'block';
+  } else {
+    buyRow.style.display = 'none';
+  }
 
   box.classList.add('show');
   saveBtn.classList.add('show');
@@ -1786,9 +2266,287 @@ function resetAddForm() {
   document.getElementById('ai-result-box').classList.remove('show');
   document.getElementById('btn-save-item').classList.remove('show');
   document.getElementById('btn-analyze').disabled = false;
+  document.getElementById('confidence-bar').style.display   = 'none';
+  document.getElementById('dev-abilities-row').style.display = 'none';
+  document.getElementById('fit-level-row').style.display    = 'none';
+  document.getElementById('play-levels').style.display      = 'none';
+  document.getElementById('buy-verdict-row').style.display  = 'none';
   state.aiResult     = null;
   state.selectedType = null;
   state.selectedAge  = [];
+}
+
+// ── 能力統計 & 缺口分析 ──────────────────────────────
+
+/** 所有能力分類 */
+const ALL_SKILLS = [
+  'gross_motor','fine_motor','cognitive','symbolic_play',
+  'social','sensory','creativity',
+  'language_input','language_output','word_mapping','social_language'
+];
+
+/** 能力中文名稱 */
+const SKILL_LABEL = {
+  gross_motor:'大動作', fine_motor:'精細動作', cognitive:'認知思考',
+  symbolic_play:'象徵遊戲', social:'社交互動', sensory:'感官探索',
+  creativity:'創意表達', language_input:'語言輸入',
+  language_output:'語言輸出', word_mapping:'詞彙對應',
+  social_language:'社交語言'
+};
+
+/**
+ * 計算所有 items 的能力分布
+ * 來源：core_skills（新格式）或 devAbilities（舊格式）
+ */
+function calculateSkillDistribution(items) {
+  const score = {};
+  items.forEach(item => {
+    const ai     = safeParseAI(item.ai_result);
+    const skills = ai?.core_skills || ai?.devAbilities || [];
+    skills.forEach(skill => {
+      score[skill] = (score[skill] || 0) + 1;
+    });
+  });
+  return score;
+}
+
+/**
+ * 找出能力缺口（出現次數最少的 3 項）
+ */
+function findWeakSkills(score) {
+  return ALL_SKILLS
+    .map(skill => ({ skill, count: score[skill] || 0 }))
+    .sort((a, b) => a.count - b.count)
+    .slice(0, 3);
+}
+
+/**
+ * 更新 state.skillScore / weakSkills，並觸發主畫面統計卡片更新
+ */
+function refreshSkillStats() {
+  state.skillScore = calculateSkillDistribution(state.items);
+  state.weakSkills = findWeakSkills(state.skillScore);
+}
+
+// ── AI 推薦購買 ───────────────────────────────────────
+
+/**
+ * 呼叫 Claude API，根據能力缺口推薦購買方向
+ * 結果顯示在主畫面的推薦區塊
+ */
+async function fetchRecommendations() {
+  if (state.items.length < 3) return; // 資料太少先不推薦
+  if (state.weakSkills.length === 0) refreshSkillStats();
+
+  const recBtn = document.getElementById('btn-refresh-rec');
+  if (recBtn) recBtn.disabled = true;
+
+  try {
+    const recPrompt = `
+你是一位幼兒發展專家。
+
+孩子月齡：${state.childAge?.label || '未知'}
+目前玩具涵蓋的能力（出現次數）：${JSON.stringify(
+  Object.fromEntries(
+    Object.entries(state.skillScore)
+      .sort((a,b) => b[1]-a[1])
+      .map(([k,v]) => [k, v])
+  )
+)}
+能力缺口（出現最少）：${JSON.stringify(state.weakSkills)}
+
+請推薦家長應該補充的玩具方向。
+回傳純 JSON（不含 markdown）：
+{
+  "recommend_direction": ["語言互動","大動作"],
+  "recommend_items": ["球類","繪本","積木"],
+  "reason": "補足語言輸出與大動作能力（50字內）"
+}`.trim();
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        messages: [{ role: 'user', content: recPrompt }]
+      })
+    });
+    const data   = await res.json();
+    const text   = data.content?.map(x => x.text || '').join('') || '';
+    const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
+    renderRecommendations(parsed);
+    localStorage.setItem('toy_rec_cache', JSON.stringify({ ts: Date.now(), data: parsed }));
+  } catch {
+    // 使用快取
+    const cache = localStorage.getItem('toy_rec_cache');
+    if (cache) {
+      try { renderRecommendations(JSON.parse(cache).data); } catch {}
+    }
+  } finally {
+    if (recBtn) recBtn.disabled = false;
+  }
+}
+
+// ── 每月發展報告 ──────────────────────────────────────
+
+/**
+ * 呼叫 Claude API 產生本月發展報告
+ */
+async function fetchMonthlyReport() {
+  const btn = document.getElementById('btn-monthly-report');
+  if (btn) { btn.disabled = true; btn.textContent = '產生中…'; }
+
+  try {
+    const reportPrompt = `
+你是一位幼兒發展分析師。
+
+孩子月齡：${state.childAge?.label || '未知'}
+玩具總數：${state.items.length}
+能力分布（能力：次數）：${JSON.stringify(state.skillScore)}
+能力缺口：${state.weakSkills.map(s => SKILL_LABEL[s.skill] || s.skill).join('、')}
+
+請產生本月發展報告。
+回傳純 JSON（不含 markdown）：
+{
+  "summary": "整體發展概況（50字內）",
+  "strength": ["fine_motor","cognitive"]（最強的2項能力）,
+  "weakness": ["language_output"]（最弱的2項能力）,
+  "suggestion": "給家長的具體建議（60字內，必須是可執行的）",
+  "nextMonth": "下個月可以嘗試的玩法方向（40字內）"
+}`.trim();
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        messages: [{ role: 'user', content: reportPrompt }]
+      })
+    });
+    const data   = await res.json();
+    const text   = data.content?.map(x => x.text || '').join('') || '';
+    const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
+    renderMonthlyReport(parsed);
+  } catch (err) {
+    showToast('報告產生失敗，請稍後再試');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🔄 重新產生'; }
+  }
+}
+
+// ── 渲染函式 ──────────────────────────────────────────
+
+/** 渲染主畫面的能力分布雷達 / 缺口卡片 */
+function renderSkillStats() {
+  refreshSkillStats();
+
+  // 能力分布橫條
+  const distEl = document.getElementById('skill-dist-list');
+  if (distEl) {
+    const maxVal = Math.max(1, ...Object.values(state.skillScore));
+    distEl.innerHTML = ALL_SKILLS.map(skill => {
+      const cnt = state.skillScore[skill] || 0;
+      const pct = Math.round((cnt / maxVal) * 100);
+      const cls = ['chip-' + skill].join(' ');
+      return `<div class="skill-row">
+        <span class="skill-row-label">${SKILL_LABEL[skill]}</span>
+        <div class="skill-bar-wrap">
+          <div class="skill-bar-fill ${cls}" style="width:${Math.max(pct,4)}%"></div>
+        </div>
+        <span class="skill-row-count">${cnt}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // 能力缺口標籤
+  const weakEl = document.getElementById('weak-skill-list');
+  if (weakEl) {
+    weakEl.innerHTML = state.weakSkills.map(w => `
+      <div class="weak-chip">
+        <span class="weak-icon">⚠️</span>
+        <div>
+          <div class="weak-name">${SKILL_LABEL[w.skill] || w.skill}</div>
+          <div class="weak-count">${w.count === 0 ? '尚未涵蓋' : `僅 ${w.count} 個玩具`}</div>
+        </div>
+      </div>`).join('');
+  }
+}
+
+/** 渲染推薦購買 */
+function renderRecommendations(rec) {
+  const wrap = document.getElementById('recommend-wrap');
+  if (!wrap || !rec) return;
+  wrap.innerHTML = `
+    <div class="rec-reason">${esc(rec.reason || '')}</div>
+    <div class="rec-directions">
+      ${(rec.recommend_direction || []).map(d =>
+        `<span class="rec-dir-chip">${esc(d)}</span>`).join('')}
+    </div>
+    <div class="rec-items">
+      ${(rec.recommend_items || []).map(i =>
+        `<div class="rec-item-row">🎁 ${esc(i)}</div>`).join('')}
+    </div>`;
+  document.getElementById('recommend-section').style.display = 'block';
+}
+
+/** 渲染月報 */
+function renderMonthlyReport(report) {
+  const wrap = document.getElementById('monthly-report-wrap');
+  if (!wrap || !report) return;
+  const sl = s => SKILL_LABEL[s] || s;
+  wrap.innerHTML = `
+    <div class="report-summary">${esc(report.summary || '')}</div>
+    <div class="report-row">
+      <div class="report-col strength">
+        <div class="report-col-title">💪 優勢能力</div>
+        ${(report.strength || []).map(s => `<span class="dev-chip chip-${s}">${sl(s)}</span>`).join('')}
+      </div>
+      <div class="report-col weakness">
+        <div class="report-col-title">🌱 待加強</div>
+        ${(report.weakness || []).map(s => `<span class="dev-chip chip-${s}">${sl(s)}</span>`).join('')}
+      </div>
+    </div>
+    <div class="report-suggestion">💡 ${esc(report.suggestion || '')}</div>
+    ${report.nextMonth ? `<div class="report-next">📅 下個月：${esc(report.nextMonth)}</div>` : ''}`;
+  document.getElementById('monthly-report-section').style.display = 'block';
+}
+
+/** 渲染新增頁的重複購買分析（在 renderAIResult 後呼叫）*/
+function renderRepeatAnalysis(ai) {
+  const wrap = document.getElementById('repeat-analysis-wrap');
+  if (!wrap) return;
+
+  if (ai.repeat_score === undefined) {
+    wrap.style.display = 'none'; return;
+  }
+
+  const lvMeta = {
+    '高': { cls: 'high', icon: '🔴', label: '重複度高' },
+    '中': { cls: 'mid',  icon: '🟡', label: '有部分重複' },
+    '低': { cls: 'low',  icon: '🟢', label: '重複度低' }
+  };
+  const lv  = ai.repeat_level || '低';
+  const lvm = lvMeta[lv] || lvMeta['低'];
+  const alt = ai.alternative;
+
+  wrap.innerHTML = `
+    <div class="repeat-bar ${lvm.cls}">
+      <span class="repeat-icon">${lvm.icon}</span>
+      <div class="repeat-body">
+        <span class="repeat-label">${lvm.label}（${ai.repeat_score}%）</span>
+        ${ai.repeat_with?.length
+          ? `<span class="repeat-with">與「${ai.repeat_with.join('、')}」重複</span>`
+          : '<span class="repeat-with">與現有玩具無明顯重複</span>'}
+      </div>
+    </div>
+    ${alt ? `<div class="alt-suggestion">
+      <span class="alt-icon">🔀</span>
+      <div><div class="alt-dir">${esc(alt.direction)}</div>
+      <div class="alt-examples">${(alt.example || []).map(e => `<span class="concern-tag">${esc(e)}</span>`).join('')}</div>
+      </div></div>` : ''}`;
+  wrap.style.display = 'block';
 }
 
 // ── 人工覆核函式 ──────────────────────────────────────
@@ -1904,6 +2662,23 @@ function initMain() {
 
   // 再拉取遠端
   fetchItems();
+
+  // 能力統計（使用快取資料先渲染）
+  if (state.items.length > 0) {
+    renderSkillStats();
+    // 3 筆以上顯示報告 CTA
+    const ctaEl = document.getElementById('report-cta-section');
+    const cntEl = document.getElementById('report-item-count');
+    if (ctaEl && state.items.length >= 3) {
+      if (cntEl) cntEl.textContent = state.items.length;
+      ctaEl.style.display = 'block';
+      // 若有快取推薦直接顯示
+      const recCache = localStorage.getItem('toy_rec_cache');
+      if (recCache) {
+        try { renderRecommendations(JSON.parse(recCache).data); } catch {}
+      }
+    }
+  }
 }
 
 async function init() {
@@ -2007,14 +2782,14 @@ function onDobChange() {
   preview.style.display = 'flex';
 }
 
-// ── 事件綁定 ──────────────────────────────────────
+// ── 事件綁定（DOM 載入完成後執行）────────────────────
+document.addEventListener('DOMContentLoaded', () => {
 
 // 設定頁：初始化並綁定出生日期
 initDobSelects();
 ['dob-year','dob-month','dob-day'].forEach(id => {
   document.getElementById(id).addEventListener('change', onDobChange);
 });
-
 // 設定頁：建立 child
 document.getElementById('btn-create-child').addEventListener('click', async () => {
   const name = document.getElementById('input-child-name').value.trim();
@@ -2035,10 +2810,11 @@ document.getElementById('btn-go-add').addEventListener('click', () => {
 
 // 主畫面：設定按鈕
 document.getElementById('btn-settings').addEventListener('click', () => {
-  if (confirm(`寶貝：${state.childName}\n\n要清除本機資料並重新設定嗎？\n（雲端資料仍保留）`)) {
-    localStorage.clear();
-    location.reload();
-  }
+  openSettings();
+  // 同步底部導覽 active 狀態
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const settingsNav = document.querySelector('.nav-item[data-nav="settings"]');
+  if (settingsNav) settingsNav.classList.add('active');
 });
 
 // 新增頁：返回
@@ -2077,16 +2853,40 @@ document.getElementById('btn-save-item').addEventListener('click', saveItem);
 // 詳細頁：返回
 document.getElementById('btn-back-from-detail').addEventListener('click', () => {
   showScreen('screen-main');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('.nav-item[data-nav="home"]').classList.add('active');
 });
 
-// Filter 篩選
+document.getElementById('btn-back-from-history').addEventListener('click', () => {
+  showScreen('screen-main');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('.nav-item[data-nav="home"]').classList.add('active');
+});
+
+document.getElementById('btn-back-from-settings').addEventListener('click', () => {
+  showScreen('screen-main');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('.nav-item[data-nav="home"]').classList.add('active');
+});
+
+// 主畫面 Filter 篩選
 document.getElementById('filter-row').addEventListener('click', e => {
   const chip = e.target.closest('.filter-chip');
   if (!chip) return;
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('#filter-row .filter-chip').forEach(c => c.classList.remove('active'));
   chip.classList.add('active');
   state.filter = chip.dataset.filter;
   renderItemsList();
+});
+
+// 記錄頁 Filter 篩選
+document.getElementById('history-filter-row').addEventListener('click', e => {
+  const chip = e.target.closest('.filter-chip');
+  if (!chip) return;
+  document.querySelectorAll('#history-filter-row .filter-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  historyFilter = chip.dataset.hfilter;
+  renderHistory();
 });
 
 // 底部導覽
@@ -2099,6 +2899,11 @@ document.querySelector('.bottom-nav').addEventListener('click', e => {
   if (nav === 'add') {
     resetAddForm();
     showScreen('screen-add');
+  } else if (nav === 'history') {
+    renderHistory();
+    showScreen('screen-history');
+  } else if (nav === 'settings') {
+    openSettings();
   }
 });
 
@@ -2110,9 +2915,301 @@ document.getElementById('input-item-name').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('btn-analyze').click();
 });
 
+// ── 記錄頁 ───────────────────────────────────────────
+
+let historyFilter = 'all';
+
+function renderHistory() {
+  const container = document.getElementById('history-list');
+  const keyword   = (document.getElementById('history-search')?.value || '').trim().toLowerCase();
+  let items = [...state.items];
+
+  if (historyFilter !== 'all') {
+    items = items.filter(item => {
+      const ai = safeParseAI(item.ai_result);
+      const v  = item.manual_verdict || ai?.verdict;
+      if (historyFilter === 'safe')    return v === 'safe';
+      if (historyFilter === 'caution') return v === 'caution';
+      if (historyFilter === 'unsafe')  return v === 'unsafe';
+      if (historyFilter === 'toy')     return item.category === 'toy';
+      if (historyFilter === 'book')    return item.category === 'book';
+      return true;
+    });
+  }
+  if (keyword) {
+    items = items.filter(i => (i.item_name || '').toLowerCase().includes(keyword));
+  }
+
+  if (items.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-emoji">🔍</div>
+      <div class="empty-title">${keyword ? '找不到符合結果' : '這個分類沒有記錄'}</div>
+      <div class="empty-sub">換個關鍵字或篩選條件試試</div></div>`;
+    return;
+  }
+
+  container.innerHTML = items.map((item, i) => {
+    const ai       = safeParseAI(item.ai_result);
+    const verdict  = ai?.verdict || 'caution';
+    const displayV = item.manual_verdict || verdict;
+    const emoji    = ai?.emoji || (item.category === 'book' ? '📚' : '🧸');
+    const catLabel = item.category === 'book' ? '繪本' : '玩具';
+    const summary  = ai?.summary || '-';
+    const vLabel   = { safe:'安全', caution:'注意', unsafe:'不適合' };
+    const manualTag = item.manual_verdict
+      ? `<span class="badge" style="background:rgba(184,216,176,.3);color:#2D6A4F">✏️ 人工確認</span>` : '';
+    const confTag   = (!item.manual_verdict && ai?.confidence === '低')
+      ? `<span class="badge" style="background:rgba(255,138,128,.2);color:var(--coral-dark)">📷 建議補拍</span>` : '';
+    const realIdx   = state.items.indexOf(item);
+
+    return `<div class="item-card ${displayV}" style="animation-delay:${i*40}ms"
+        onclick="openDetail(${realIdx}, '${esc(JSON.stringify(item).replace(/'/g,"&#39;"))}')">
+      <div class="card-emoji-wrap">${emoji}</div>
+      <div class="card-body">
+        <div class="card-name">${esc(item.item_name)}</div>
+        <div class="card-result">${esc(summary)}</div>
+        <div class="card-meta">
+          <span class="badge ${item.category}">${catLabel}</span>
+          <span class="badge ${displayV}">${vLabel[displayV] || displayV}</span>
+          ${manualTag}${confTag}
+          <span class="card-date">${fmtDate(item.created_at)}</span>
+        </div>
+      </div></div>`;
+  }).join('');
+}
+
+// ── 設定頁 ───────────────────────────────────────────
+
+function openSettings() {
+  const ageInfo = state.childDob ? calcAge(state.childDob) : null;
+  document.getElementById('s-child-name').textContent = state.childName || '-';
+  document.getElementById('s-child-dob').textContent  = state.childDob  || '-';
+  document.getElementById('s-child-age').textContent  = ageInfo ? ageInfo.label : '-';
+  showScreen('screen-settings');
+}
+
+function downloadBackup() {
+  const backup = {
+    version:    '2.0',
+    exportedAt: new Date().toISOString(),
+    child: {
+      child_id:   state.childId,
+      child_name: state.childName,
+      child_dob:  state.childDob,
+    },
+    items: state.items
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  const date = new Date().toISOString().slice(0,10).replace(/-/g,'');
+  a.href     = url;
+  a.download = `寶貝玩具小幫手_備份_${state.childName || 'backup'}_${date}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('備份檔案已下載 ✅');
+}
+
+function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.items || !Array.isArray(data.items)) {
+        showToast('備份檔案格式不正確 ❌'); return;
+      }
+      const existingIds = new Set(state.items.map(i => i.item_id));
+      const newItems    = data.items.filter(i => !existingIds.has(i.item_id));
+      state.items = [...state.items, ...newItems];
+      cacheItems(state.items);
+      renderItemsList(); updateStats(); renderHistory();
+      showToast('匯入完成！新增 ' + newItems.length + ' 筆記錄 ✅');
+    } catch {
+      showToast('備份檔案讀取失敗，請確認格式 ❌');
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function toggleHowTo(el) {
+  const body  = el.nextElementSibling;
+  const arrow = el.querySelector('.how-arrow');
+  const open  = body.classList.toggle('open');
+  arrow.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function confirmClearData() {
+  if (confirm('⚠️ 確定要清除本機資料？
+
+• 寶貝資訊和 token 將清除
+• 本機快取記錄將清除
+• 雲端 Google Sheet 資料仍保留
+
+建議先下載備份再操作。')) {
+    localStorage.clear();
+    showToast('本機資料已清除，即將重新載入…');
+    setTimeout(() => location.reload(), 1500);
+  }
+}
+
 // ── 啟動 ─────────────────────────────────────────
 init();
+
+}); // END DOMContentLoaded
 </script>
+<!-- ════════════════════════════════════════════════
+  SCREEN 5：記錄頁（全部記錄 + 搜尋）
+═══════════════════════════════════════════════════ -->
+<div id="screen-history" class="screen">
+  <div class="add-header">
+    <button class="btn-back" id="btn-back-from-history">←</button>
+    <div class="add-title">📖 所有記錄</div>
+  </div>
+  <div style="padding:16px 24px 8px">
+    <div class="input-wrap" style="margin-bottom:0">
+      <span class="input-emoji">🔍</span>
+      <input type="text" class="text-input" id="history-search"
+             placeholder="搜尋玩具或繪本名稱…" autocomplete="off"
+             oninput="renderHistory()">
+    </div>
+  </div>
+  <div class="filter-row" id="history-filter-row">
+    <button class="filter-chip active" data-hfilter="all">全部</button>
+    <button class="filter-chip" data-hfilter="safe">✅ 安全</button>
+    <button class="filter-chip" data-hfilter="caution">⚠️ 注意</button>
+    <button class="filter-chip" data-hfilter="unsafe">🚫 不適合</button>
+    <button class="filter-chip" data-hfilter="toy">🧸 玩具</button>
+    <button class="filter-chip" data-hfilter="book">📚 繪本</button>
+  </div>
+  <div class="items-list" id="history-list" style="padding-bottom:40px"></div>
+</div>
+
+<!-- ════════════════════════════════════════════════
+  SCREEN 6：設定頁
+═══════════════════════════════════════════════════ -->
+<div id="screen-settings" class="screen">
+  <div class="add-header">
+    <button class="btn-back" id="btn-back-from-settings">←</button>
+    <div class="add-title">⚙️ 設定</div>
+  </div>
+
+  <div style="padding:20px 24px;display:flex;flex-direction:column;gap:16px;padding-bottom:60px">
+
+    <!-- 寶貝資訊卡 -->
+    <div class="settings-card">
+      <div class="settings-section-title">👶 寶貝資訊</div>
+      <div class="settings-info-row">
+        <span class="settings-info-label">名稱</span>
+        <span class="settings-info-val" id="s-child-name">-</span>
+      </div>
+      <div class="settings-info-row">
+        <span class="settings-info-label">出生日期</span>
+        <span class="settings-info-val" id="s-child-dob">-</span>
+      </div>
+      <div class="settings-info-row">
+        <span class="settings-info-label">目前月齡</span>
+        <span class="settings-info-val" id="s-child-age">-</span>
+      </div>
+    </div>
+
+    <!-- 備份下載區 -->
+    <div class="settings-card highlight">
+      <div class="settings-section-title">💾 資料備份</div>
+      <p class="settings-desc">將所有判斷記錄下載成 JSON 檔案，儲存在手機或電腦中作為備份。</p>
+      <!-- 引導步驟 -->
+      <div class="guide-steps">
+        <div class="guide-step">
+          <div class="guide-step-num">1</div>
+          <div class="guide-step-text">點下方按鈕，瀏覽器會下載 <code>backup.json</code></div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-num">2</div>
+          <div class="guide-step-text">將檔案存到 iCloud / Google Drive 等雲端，避免手機遺失</div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-num">3</div>
+          <div class="guide-step-text">換裝置時用「匯入備份」功能還原</div>
+        </div>
+      </div>
+      <button class="btn-setting-action primary" onclick="downloadBackup()">
+        ⬇️ 下載備份檔（JSON）
+      </button>
+    </div>
+
+    <!-- 匯入備份 -->
+    <div class="settings-card">
+      <div class="settings-section-title">📂 匯入備份</div>
+      <p class="settings-desc">選擇之前下載的 <code>backup.json</code>，還原所有記錄到這台裝置。</p>
+      <div class="guide-steps">
+        <div class="guide-step">
+          <div class="guide-step-num">1</div>
+          <div class="guide-step-text">點下方按鈕選擇備份檔案</div>
+        </div>
+        <div class="guide-step">
+          <div class="guide-step-num">2</div>
+          <div class="guide-step-text">匯入後會<b>合併</b>現有記錄（不會刪除現有資料）</div>
+        </div>
+      </div>
+      <input type="file" id="import-file" accept=".json" style="display:none"
+             onchange="importBackup(event)">
+      <button class="btn-setting-action" onclick="document.getElementById('import-file').click()">
+        📂 選擇備份檔案匯入
+      </button>
+    </div>
+
+    <!-- 使用說明 -->
+    <div class="settings-card">
+      <div class="settings-section-title">📋 使用說明</div>
+      <div class="how-to-list">
+        <div class="how-to-item" onclick="toggleHowTo(this)">
+          <span>📷 拍照判斷怎麼用？</span><span class="how-arrow">▼</span>
+        </div>
+        <div class="how-to-body">
+          新增頁面上方可以拍照或選圖，AI 會直接看圖辨識玩具名稱並判斷安全性與發展適合度，不需要手動輸入名稱。
+        </div>
+        <div class="how-to-item" onclick="toggleHowTo(this)">
+          <span>✏️ 什麼是人工覆核？</span><span class="how-arrow">▼</span>
+        </div>
+        <div class="how-to-body">
+          AI 判斷可能有誤差，進入記錄詳情頁後，點「修改判斷」可以用你的親身確認結果覆蓋 AI 判斷，列表會優先顯示人工確認的結果。
+        </div>
+        <div class="how-to-item" onclick="toggleHowTo(this)">
+          <span>🔴 信心度低是什麼意思？</span><span class="how-arrow">▼</span>
+        </div>
+        <div class="how-to-body">
+          若 AI 判斷信心度為「低」，代表圖片不夠清晰或資訊不完整，建議補拍包裝標籤或安全標示，並以人工確認為準。
+        </div>
+        <div class="how-to-item" onclick="toggleHowTo(this)">
+          <span>📱 怎麼加到手機主畫面？</span><span class="how-arrow">▼</span>
+        </div>
+        <div class="how-to-body">
+          iPhone：Safari 開啟網頁 → 點底部分享按鈕 → 加入主畫面。加入後可以像 App 一樣直接點開，沒有網址列。
+        </div>
+      </div>
+    </div>
+
+    <!-- 危險區 -->
+    <div class="settings-card danger-zone">
+      <div class="settings-section-title">⚠️ 危險操作</div>
+      <p class="settings-desc">清除本機資料後，若沒有備份，記錄將無法還原。建議先下載備份再執行。</p>
+      <button class="btn-setting-action danger" onclick="confirmClearData()">
+        🗑️ 清除本機資料並重新設定
+      </button>
+    </div>
+
+    <!-- 版本資訊 -->
+    <div style="text-align:center;font-size:12px;color:var(--text-soft);font-weight:700;padding:8px 0">
+      寶貝玩具小幫手 v2.0　｜　資料儲存於本機 + Google Sheet
+    </div>
+
+  </div>
+</div>
+
 <!-- 覆核 Modal -->
 <div class="modal-overlay" id="review-modal">
   <div class="modal-sheet">
