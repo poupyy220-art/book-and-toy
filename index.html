@@ -39,11 +39,11 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-  height: 100%;
   font-family: 'Nunito', 'Noto Sans TC', sans-serif;
   background: var(--cream);
   color: var(--text-main);
   overflow-x: hidden;
+  /* 移除 height:100%，改用 min-height 讓 iPhone Safari 可以正常捲動 */
 }
 
 body {
@@ -57,10 +57,14 @@ body {
 /* ── 頁面切換容器 ──────────────────────────────────────── */
 .screen {
   display: none;
-  min-height: 100vh;
+  min-height: 100svh; /* svh = small viewport height，iPhone Safari 安全高度 */
   animation: fadeSlideIn .4s ease both;
 }
-.screen.active { display: flex; flex-direction: column; }
+.screen.active {
+  display: flex; flex-direction: column;
+  overflow-y: auto; /* 讓每個 screen 自己可以捲動 */
+  -webkit-overflow-scrolling: touch;
+}
 
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateY(18px); }
@@ -107,8 +111,9 @@ body {
    SCREEN 1 — 歡迎 / 首次設定
 ═══════════════════════════════════════════════════════ */
 #screen-setup {
-  align-items: center; justify-content: center;
-  padding: 40px 24px;
+  align-items: center;
+  /* 移除 justify-content:center，改用 padding 撐開，iPhone 才能捲動 */
+  padding: 48px 24px 60px;
   text-align: center;
 }
 
@@ -993,7 +998,7 @@ body {
 ═══════════════════════════════════════════════════ -->
 <script>
 // ── 設定 ──────────────────────────────────────────
-const API_URL = 'https://script.google.com/macros/s/AKfycbwwhtjPgPif1mOLSyifEeSL26-OGuzCikyl7z9FBBuL1TFwbjsS1CnBld7g_VrRlZJnWw/exec';
+const API_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
 // ⚠️ 替換成你的 GAS Web App URL
 
 const LS_CHILD_ID  = 'toy_child_id';
