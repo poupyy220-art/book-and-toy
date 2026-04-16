@@ -593,7 +593,102 @@ body {
   padding: 4px 12px; border-radius: 100px;
   background: rgba(245,168,122,.2); color: var(--text-mid);
 }
-/* 導讀 tip 區塊 */
+/* ── 信心度指示器 ─────────────────────────────────── */
+.confidence-bar {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px; padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 800;
+}
+.confidence-bar.high   { background: rgba(184,216,176,.25); color: #2D6A4F; }
+.confidence-bar.mid    { background: rgba(255,217,125,.25); color: #7D5A00; }
+.confidence-bar.low    { background: rgba(255,138,128,.2);  color: #7D1F1F; border: 1.5px solid rgba(255,138,128,.4); }
+.conf-icon { font-size: 14px; }
+.conf-text { flex: 1; }
+.conf-reason { font-weight: 600; opacity: .8; margin-left: 4px; }
+
+/* ── 免責聲明 ─────────────────────────────────────── */
+.disclaimer {
+  margin-top: 14px; padding: 10px 14px;
+  background: rgba(61,44,30,.05);
+  border-radius: var(--radius-sm);
+  font-size: 11px; color: var(--text-soft);
+  font-weight: 700; line-height: 1.6; text-align: center;
+  letter-spacing: .02em;
+}
+
+/* ── 覆核相關 ─────────────────────────────────────── */
+.manual-verdict-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; margin-bottom: 12px;
+  background: rgba(184,216,176,.2);
+  border: 1.5px solid var(--sage-dark);
+  border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 800; color: #2D6A4F;
+}
+.btn-review {
+  margin-top: 12px; width: 100%;
+  padding: 12px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--cream-dark);
+  background: var(--cream); color: var(--text-mid);
+  font-size: 13px; font-weight: 800; font-family: inherit;
+  cursor: pointer; transition: all .2s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.btn-review:hover { border-color: var(--sage-dark); color: #2D6A4F; background: rgba(184,216,176,.15); }
+
+/* 覆核 Modal 遮罩 */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 8000;
+  background: rgba(61,44,30,.5); backdrop-filter: blur(4px);
+  align-items: flex-end; justify-content: center;
+  padding: 0;
+}
+.modal-overlay.show { display: flex; }
+.modal-sheet {
+  width: 100%; max-width: 680px;
+  background: var(--cream); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  padding: 28px 24px 40px;
+  animation: sheetUp .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes sheetUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.modal-title {
+  font-size: 18px; font-weight: 900; margin-bottom: 20px; text-align: center;
+}
+.review-options {
+  display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;
+}
+.review-option {
+  padding: 16px 18px; border-radius: var(--radius-md);
+  border: 2.5px solid var(--cream-dark);
+  background: var(--white); cursor: pointer;
+  font-size: 15px; font-weight: 800; font-family: inherit;
+  display: flex; align-items: center; gap: 12px;
+  transition: all .2s; color: var(--text-main);
+}
+.review-option:hover { border-color: var(--peach); }
+.review-option.sel-safe    { border-color: var(--sage-dark);   background: rgba(184,216,176,.15); }
+.review-option.sel-caution { border-color: #D4A017;             background: rgba(255,217,125,.15); }
+.review-option.sel-unsafe  { border-color: var(--coral-dark);  background: rgba(255,138,128,.12); }
+.btn-confirm-review {
+  width: 100%; padding: 16px;
+  background: linear-gradient(135deg, var(--sage-dark), #5A9A52);
+  border: none; border-radius: var(--radius-md);
+  color: var(--white); font-size: 16px; font-weight: 900;
+  font-family: inherit; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(140,192,132,.35);
+}
+.btn-cancel-review {
+  width: 100%; padding: 12px; margin-top: 8px;
+  background: transparent; border: none;
+  color: var(--text-soft); font-size: 14px; font-weight: 700;
+  font-family: inherit; cursor: pointer;
+}
+
+/* ── 導讀 tip 區塊 */
 .ai-tip {
   width: 100%; margin-top: 10px;
   background: rgba(168,216,234,.2);
@@ -605,6 +700,52 @@ body {
   line-height: 1.6;
 }
 .ai-tip-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+/* 圖片上傳區 */
+.photo-upload-area {
+  width: 100%; min-height: 160px;
+  border: 2.5px dashed var(--peach-dark);
+  border-radius: var(--radius-md);
+  background: rgba(255,203,164,.08);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; overflow: hidden; position: relative;
+  transition: border-color .2s, background .2s;
+}
+.photo-upload-area:hover,
+.photo-upload-area:active {
+  border-color: var(--coral-dark);
+  background: rgba(255,203,164,.16);
+}
+.photo-placeholder {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 6px; padding: 24px;
+  pointer-events: none;
+}
+.photo-icon      { font-size: 40px; }
+.photo-hint-main { font-size: 15px; font-weight: 800; color: var(--text-mid); }
+.photo-hint-sub  { font-size: 12px; color: var(--text-soft); font-weight: 600; }
+.photo-preview-img {
+  width: 100%; height: 100%; object-fit: contain;
+  max-height: 260px; padding: 8px;
+}
+.photo-actions {
+  display: flex; gap: 8px; margin-top: 8px;
+}
+.btn-photo-action {
+  flex: 1; padding: 10px;
+  background: var(--cream-dark); border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 800; font-family: inherit;
+  color: var(--text-mid); cursor: pointer;
+  transition: background .15s;
+}
+.btn-photo-action:hover { background: var(--peach); }
+.btn-photo-action.danger { color: var(--coral-dark); }
+.btn-photo-action.danger:hover { background: rgba(255,138,128,.2); }
+.label-hint {
+  font-size: 11px; color: var(--text-soft);
+  font-weight: 600; letter-spacing: 0; text-transform: none;
+}
 
 .btn-analyze {
   width: 100%; padding: 18px;
@@ -888,9 +1029,29 @@ body {
   </div>
 
   <div class="add-body">
-    <!-- 物品名稱 -->
+
+    <!-- 📷 圖片上傳區 -->
     <div class="form-group">
-      <label class="form-label">📝 玩具 / 繪本名稱</label>
+      <label class="form-label">📷 拍照 / 上傳圖片（選填，AI 直接看圖判斷）</label>
+      <div class="photo-upload-area" id="photo-upload-area" onclick="document.getElementById('input-photo').click()">
+        <div class="photo-placeholder" id="photo-placeholder">
+          <div class="photo-icon">📷</div>
+          <div class="photo-hint-main">點擊拍照或選擇圖片</div>
+          <div class="photo-hint-sub">支援 JPG、PNG，手機可直接拍照</div>
+        </div>
+        <img id="photo-preview" class="photo-preview-img" style="display:none" alt="預覽">
+      </div>
+      <input type="file" id="input-photo" accept="image/*"
+             style="display:none" onchange="handlePhotoSelect(event)">
+      <div class="photo-actions" id="photo-actions" style="display:none">
+        <button class="btn-photo-action" onclick="document.getElementById('input-photo').click()">🔄 重新選擇</button>
+        <button class="btn-photo-action danger" onclick="clearPhoto()">🗑️ 移除圖片</button>
+      </div>
+    </div>
+
+    <!-- 物品名稱（圖片上傳後 AI 自動填入，也可手動輸入）-->
+    <div class="form-group">
+      <label class="form-label">📝 玩具 / 繪本名稱 <span class="label-hint">（上傳圖片後可留空，AI 自動辨識）</span></label>
       <div class="input-wrap" style="margin-bottom:0">
         <span class="input-emoji">🔍</span>
         <input type="text" class="text-input" id="input-item-name"
@@ -945,12 +1106,19 @@ body {
         <div class="ai-dot"></div>
         <div class="ai-label">AI 判斷結果</div>
       </div>
+      <!-- 信心度指示器（JS 動態填入）-->
+      <div id="confidence-bar" class="confidence-bar" style="display:none"></div>
       <div class="verdict-row">
         <div class="verdict-badge" id="verdict-badge">安全</div>
         <div class="verdict-score" id="verdict-score">⭐</div>
       </div>
       <div class="ai-text" id="ai-text-content">-</div>
       <div class="concern-list" id="concern-list"></div>
+      <!-- 免責聲明（固定顯示）-->
+      <div class="disclaimer">
+        ⚠️ AI 判斷僅供參考，實際安全性請家長親自確認<br>
+        尤其注意小零件、材質標示與適齡說明
+      </div>
     </div>
 
     <!-- 儲存按鈕 -->
@@ -978,12 +1146,24 @@ body {
   <div class="detail-body">
     <div class="detail-section">
       <div class="detail-section-title">🤖 AI 判斷結果</div>
+      <!-- 人工覆核已存在時優先顯示 -->
+      <div id="manual-verdict-bar" class="manual-verdict-bar" style="display:none">
+        ✅ 人工確認 <span id="manual-verdict-text"></span>
+      </div>
+      <!-- 信心度（詳細頁用）-->
+      <div id="detail-confidence-bar" class="confidence-bar" style="display:none"></div>
       <div class="detail-verdict-row">
         <div class="verdict-badge" id="detail-verdict-badge">-</div>
         <div class="detail-score-big" id="detail-score">-</div>
       </div>
       <div class="detail-ai-text" id="detail-ai-text">-</div>
       <div class="concern-list" id="detail-concern-list"></div>
+      <!-- 免責聲明 -->
+      <div class="disclaimer">⚠️ AI 判斷僅供參考，最終安全由家長親自確認</div>
+      <!-- 人工覆核按鈕 -->
+      <button class="btn-review" id="btn-review" onclick="openReviewModal()">
+        ✏️ 修改判斷（人工確認）
+      </button>
     </div>
 
     <div class="detail-section">
@@ -1020,6 +1200,7 @@ let state = {
   aiResult:    null,
   selectedType: null,
   selectedAge:  [],
+  selectedPhoto: null,   // { base64, mediaType } 選填
 };
 
 // ── UI 工具 ───────────────────────────────────────
@@ -1188,13 +1369,19 @@ async function saveItem() {
 // ── AI 判斷（呼叫 Claude API）────────────────────
 
 async function analyzeItem() {
-  const name = document.getElementById('input-item-name').value.trim();
-  if (!name) { showToast('請輸入玩具或繪本名稱 📝'); return; }
+  const name  = document.getElementById('input-item-name').value.trim();
+  const photo = state.selectedPhoto; // { base64, mediaType } or null
+
+  // 圖片跟名稱至少要有一個
+  if (!name && !photo) {
+    showToast('請上傳圖片或輸入名稱 📝');
+    return;
+  }
 
   const type = state.selectedType || 'toy';
   const ages = state.selectedAge.join(', ') || '未指定';
 
-  // 精確月齡：每次分析都即時重算（避免長時間停留頁面月齡過期）
+  // 精確月齡：每次分析都即時重算
   const ageInfo = state.childDob ? calcAge(state.childDob) : null;
   const ageStr  = ageInfo
     ? `${ageInfo.label}（共 ${ageInfo.totalMonths} 個月，發展階段：${ageInfo.desc}）`
@@ -1204,7 +1391,7 @@ async function analyzeItem() {
   document.getElementById('btn-analyze').disabled = true;
 
   try {
-    const prompt = `
+    const promptText = `
 你是幼兒玩具與繪本安全評估專家，同時熟悉兒童發展心理學。
 
 請依據以下精確月齡，判斷玩具/繪本的安全性與發展適切性，並回傳嚴格 JSON（不含任何 markdown）：
@@ -1230,17 +1417,44 @@ async function analyzeItem() {
   "ageMatch": "完全符合" | "略低" | "略高" | "不符合",
   "concerns": ["具體注意事項1","具體注意事項2"]（最多3項，無則空陣列）,
   "tip": "給爸媽的導讀或互動建議（50字內）",
-  "emoji": "最符合的單一 emoji"
+  "emoji": "最符合的單一 emoji",
+  "itemName": "從圖片辨識到的物品名稱（若已有文字輸入則忽略此欄）",
+  "confidence": "高" | "中" | "低",
+  "confidenceReason": "信心度說明（圖片清晰/部分遮蔽/看不到標籤等，20字內）"
 }
+
+重要規則：
+- 若圖片模糊、角度不佳、看不到安全標籤，confidence 必須填「低」或「中」
+- 若 confidence 為「低」，concerns 中必須加入「建議補充拍攝：[具體說明哪個角度]」
+- 若只有文字沒有圖片，confidence 填「中」並說明「依名稱文字判斷，未見實物」
 `.trim();
+
+    // 依有無圖片決定 messages 格式
+    let userContent;
+    if (photo) {
+      // Vision 模式：圖片 + 文字 prompt
+      userContent = [
+        {
+          type: 'image',
+          source: { type: 'base64', media_type: photo.mediaType, data: photo.base64 }
+        },
+        {
+          type: 'text',
+          text: (name ? `物品名稱補充：${name}\n\n` : '請先從圖片辨識物品名稱，再進行以下評估。\n\n') + promptText
+        }
+      ];
+    } else {
+      // 純文字模式
+      userContent = promptText;
+    }
 
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model:      'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages:   [{ role: 'user', content: prompt }]
+        max_tokens: 1200,
+        messages:   [{ role: 'user', content: userContent }]
       })
     });
 
@@ -1249,6 +1463,10 @@ async function analyzeItem() {
     const clean   = text.replace(/```json|```/g, '').trim();
     const aiData  = JSON.parse(clean);
     state.aiResult = aiData;
+    // 若是圖片模式且使用者沒填名稱，用 AI 辨識到的名稱自動填入
+    if (photo && !name && aiData.itemName) {
+      document.getElementById('input-item-name').value = aiData.itemName;
+    }
     renderAIResult(aiData);
 
   } catch (err) {
@@ -1278,9 +1496,31 @@ function renderAIResult(ai) {
   const concerns= document.getElementById('concern-list');
   const saveBtn = document.getElementById('btn-save-item');
 
+  // ── 信心度處理 ────────────────────────────────────
+  // 低信心時強制升級警告等級（safe → caution）
+  const conf = ai.confidence || '中';
+  const displayVerdict = (conf === '低' && ai.verdict === 'safe') ? 'caution' : ai.verdict;
+
+  // 信心度指示器
+  const confBar    = document.getElementById('confidence-bar');
+  const confMeta   = { '高': { cls: 'high', icon: '🟢', label: '圖片清晰，判斷可靠' },
+                        '中': { cls: 'mid',  icon: '🟡', label: '部分資訊不完整' },
+                        '低': { cls: 'low',  icon: '🔴', label: '建議補充拍攝或人工確認' } };
+  const cm = confMeta[conf] || confMeta['中'];
+  confBar.className   = `confidence-bar ${cm.cls}`;
+  confBar.style.display = 'flex';
+  confBar.innerHTML = `<span class="conf-icon">${cm.icon}</span>
+    <span class="conf-text">判斷信心：<b>${conf}</b>
+    <span class="conf-reason">${ai.confidenceReason ? '— ' + esc(ai.confidenceReason) : ''}</span></span>`;
+
   const verdictMap = { safe: '✅ 安全', caution: '⚠️ 注意', unsafe: '🚫 不適合' };
-  badge.textContent = verdictMap[ai.verdict] || ai.verdict;
-  badge.className   = `verdict-badge ${ai.verdict}`;
+  // 若因低信心被升級，顯示升級說明
+  if (displayVerdict !== ai.verdict) {
+    badge.textContent = '⚠️ 注意（圖片不清晰）';
+  } else {
+    badge.textContent = verdictMap[displayVerdict] || displayVerdict;
+  }
+  badge.className   = `verdict-badge ${displayVerdict}`;
   score.textContent = ai.score;
   text.textContent  = ai.detail;
 
@@ -1301,10 +1541,15 @@ function renderAIResult(ai) {
     ? `<div class="ai-tip"><span class="ai-tip-icon">💡</span><span>${ai.tip}</span></div>`
     : '';
 
-  concerns.innerHTML =
-    ageMatchEl +
-    (ai.concerns || []).map(c => `<span class="concern-tag">• ${esc(c)}</span>`).join('') +
-    tipEl;
+  // 補拍提示用不同樣式標示
+  const concernsHtml = (ai.concerns || []).map(item => {
+    const isRetake = item.startsWith('建議補充拍攝');
+    return isRetake
+      ? `<span class="concern-tag" style="background:rgba(255,138,128,.2);color:var(--coral-dark);width:100%">📷 ${esc(item)}</span>`
+      : `<span class="concern-tag">• ${esc(item)}</span>`;
+  }).join('');
+
+  concerns.innerHTML = ageMatchEl + concernsHtml + tipEl;
 
   box.classList.add('show');
   saveBtn.classList.add('show');
@@ -1352,9 +1597,17 @@ function renderItemsList() {
     const emoji    = ai?.emoji || (item.category === 'book' ? '📚' : '🧸');
     const catLabel = item.category === 'book' ? '繪本' : '玩具';
     const summary  = ai?.summary || item.ai_result || '-';
+    // 人工覆核優先顯示
+    const displayVerdict = item.manual_verdict || verdict;
+    const manualTag = item.manual_verdict
+      ? `<span class="badge" style="background:rgba(184,216,176,.3);color:#2D6A4F">✏️ 人工確認</span>`
+      : '';
+    const confTag = (!item.manual_verdict && ai?.confidence === '低')
+      ? `<span class="badge" style="background:rgba(255,138,128,.2);color:var(--coral-dark)">📷 建議補拍</span>`
+      : '';
 
     return `
-      <div class="item-card ${verdict}" style="animation-delay:${idx * 50}ms"
+      <div class="item-card ${displayVerdict}" style="animation-delay:${idx * 50}ms"
            onclick="openDetail(${idx}, '${esc(JSON.stringify(item).replace(/'/g,"&#39;"))}')">
         <div class="card-emoji-wrap">${emoji}</div>
         <div class="card-body">
@@ -1362,7 +1615,8 @@ function renderItemsList() {
           <div class="card-result">${esc(summary)}</div>
           <div class="card-meta">
             <span class="badge ${item.category}">${catLabel}</span>
-            <span class="badge ${verdict}">${verdict === 'safe' ? '安全' : verdict === 'caution' ? '注意' : '不適合'}</span>
+            <span class="badge ${displayVerdict}">${displayVerdict === 'safe' ? '安全' : displayVerdict === 'caution' ? '注意' : '不適合'}</span>
+            ${manualTag}${confTag}
             <span class="card-date">${fmtDate(item.created_at)}</span>
           </div>
         </div>
@@ -1373,10 +1627,12 @@ function renderItemsList() {
 function updateStats() {
   let safe = 0, caution = 0, unsafe = 0;
   state.items.forEach(item => {
+    // 人工覆核優先於 AI 判斷
     const ai = safeParseAI(item.ai_result);
-    if (ai?.verdict === 'safe')   safe++;
-    else if (ai?.verdict === 'caution') caution++;
-    else if (ai?.verdict === 'unsafe')  unsafe++;
+    const v  = item.manual_verdict || ai?.verdict;
+    if (v === 'safe')   safe++;
+    else if (v === 'caution') caution++;
+    else if (v === 'unsafe')  unsafe++;
   });
   document.getElementById('stat-safe').textContent    = safe;
   document.getElementById('stat-caution').textContent = caution;
@@ -1414,11 +1670,43 @@ function openDetail(idx, itemJson) {
       <span class="badge ${item.category}">${catLabel}</span>
       <span class="badge ${verdict}">${verdictTxt[verdict] || verdict}</span>`;
 
+    // 補拍提示
     document.getElementById('detail-concern-list').innerHTML =
-      (ai?.concerns || []).map(c => `<span class="concern-tag">• ${esc(c)}</span>`).join('');
+      (ai?.concerns || []).map(item => {
+        const isRetake = item.startsWith('建議補充拍攝');
+        return isRetake
+          ? `<span class="concern-tag" style="background:rgba(255,138,128,.2);color:var(--coral-dark);width:100%">📷 ${esc(item)}</span>`
+          : `<span class="concern-tag">• ${esc(item)}</span>`;
+      }).join('');
+
+    // 信心度（詳細頁）
+    const conf2   = ai?.confidence || '中';
+    const confMeta2 = { '高': { cls: 'high', icon: '🟢' }, '中': { cls: 'mid', icon: '🟡' }, '低': { cls: 'low', icon: '🔴' } };
+    const cm2     = confMeta2[conf2] || confMeta2['中'];
+    const detailConfBar = document.getElementById('detail-confidence-bar');
+    detailConfBar.className   = `confidence-bar ${cm2.cls}`;
+    detailConfBar.style.display = 'flex';
+    detailConfBar.innerHTML   = `<span class="conf-icon">${cm2.icon}</span>
+      <span class="conf-text">判斷信心：<b>${conf2}</b>${ai?.confidenceReason ? '　— ' + esc(ai.confidenceReason) : ''}</span>`;
+
+    // 人工覆核優先顯示
+    const manualBar  = document.getElementById('manual-verdict-bar');
+    const manualText = document.getElementById('manual-verdict-text');
+    const manualMap  = { safe: '✅ 安全', caution: '⚠️ 注意', unsafe: '🚫 不適合' };
+    if (item.manual_verdict) {
+      manualBar.style.display = 'flex';
+      manualText.textContent  = manualMap[item.manual_verdict] || item.manual_verdict;
+      // 覆核時 badge 顯示人工結果
+      const badge2 = document.getElementById('detail-verdict-badge');
+      badge2.textContent = manualMap[item.manual_verdict] || item.manual_verdict;
+      badge2.className   = `verdict-badge ${item.manual_verdict}`;
+    } else {
+      manualBar.style.display = 'none';
+    }
 
     document.getElementById('detail-info').innerHTML = `
       <div>📅 判斷時間：${fmtDate(item.created_at)}</div>
+      ${item.manual_verdict ? '<div>✏️ 已人工確認</div>' : ''}
       ${item.note ? `<div>💬 備註：${esc(item.note)}</div>` : ''}
     `;
 
@@ -1428,11 +1716,71 @@ function openDetail(idx, itemJson) {
   }
 }
 
+// ── 圖片處理函式 ─────────────────────────────────────
+
+/**
+ * 使用者選取圖片後：
+ * 1. 將檔案轉成 base64
+ * 2. 顯示預覽
+ * 3. 存入 state.selectedPhoto
+ */
+function handlePhotoSelect(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  // 限制大小 10MB（Claude API 上限）
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('圖片太大，請選 10MB 以下的圖片');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const dataUrl   = e.target.result;
+    const base64    = dataUrl.split(',')[1];
+    const mediaType = file.type || 'image/jpeg';
+
+    // 儲存到 state
+    state.selectedPhoto = { base64, mediaType };
+
+    // 顯示預覽
+    const preview = document.getElementById('photo-preview');
+    const placeholder = document.getElementById('photo-placeholder');
+    preview.src = dataUrl;
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
+
+    // 顯示操作列
+    document.getElementById('photo-actions').style.display = 'flex';
+
+    showToast('圖片已選取，可以開始 AI 判斷 ✅');
+  };
+  reader.readAsDataURL(file);
+}
+
+/** 清除已選圖片 */
+function clearPhoto() {
+  state.selectedPhoto = null;
+  const preview = document.getElementById('photo-preview');
+  const placeholder = document.getElementById('photo-placeholder');
+  if (preview) {
+    preview.src = '';
+    preview.style.display = 'none';
+  }
+  if (placeholder) placeholder.style.display = 'flex';
+  const actions = document.getElementById('photo-actions');
+  if (actions) actions.style.display = 'none';
+  // 清空 file input 讓同一張圖可以重選
+  const input = document.getElementById('input-photo');
+  if (input) input.value = '';
+}
+
 // ── 表單重設 ──────────────────────────────────────
 
 function resetAddForm() {
   document.getElementById('input-item-name').value = '';
   document.getElementById('input-item-note').value  = '';
+  clearPhoto(); // 清除圖片
   document.querySelectorAll('#add-age-grid .age-chip').forEach(c => c.classList.remove('selected'));
   document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
   document.getElementById('ai-result-box').classList.remove('show');
@@ -1441,6 +1789,94 @@ function resetAddForm() {
   state.aiResult     = null;
   state.selectedType = null;
   state.selectedAge  = [];
+}
+
+// ── 人工覆核函式 ──────────────────────────────────────
+
+let reviewSelectedVerdict = null; // 暫存選擇的覆核結果
+
+/** 開啟覆核 Modal */
+function openReviewModal() {
+  reviewSelectedVerdict = null;
+  // 清除選中狀態
+  document.querySelectorAll('.review-option').forEach(o => {
+    o.classList.remove('sel-safe', 'sel-caution', 'sel-unsafe');
+  });
+  // 若已有人工覆核，預選
+  const cur = state.currentItem?.manual_verdict;
+  if (cur) {
+    const btn = document.querySelector(`.review-option[data-verdict="${cur}"]`);
+    if (btn) { selectReview(btn); }
+  }
+  document.getElementById('review-modal').classList.add('show');
+}
+
+/** 選擇覆核結果 */
+function selectReview(btn) {
+  document.querySelectorAll('.review-option').forEach(o => {
+    o.classList.remove('sel-safe', 'sel-caution', 'sel-unsafe');
+  });
+  const v = btn.dataset.verdict;
+  btn.classList.add(`sel-${v}`);
+  reviewSelectedVerdict = v;
+}
+
+/** 關閉 Modal */
+function closeReviewModal() {
+  document.getElementById('review-modal').classList.remove('show');
+  reviewSelectedVerdict = null;
+}
+
+/** 確認儲存覆核結果（本地 + 後端）*/
+async function confirmReview() {
+  if (!reviewSelectedVerdict) { showToast('請先選擇判斷結果'); return; }
+  if (!state.currentItem)     { closeReviewModal(); return; }
+
+  // 本地更新
+  state.currentItem.manual_verdict = reviewSelectedVerdict;
+  const idx = state.items.findIndex(i => i.item_id === state.currentItem.item_id);
+  if (idx !== -1) {
+    state.items[idx].manual_verdict = reviewSelectedVerdict;
+    cacheItems(state.items);
+  }
+
+  // 後端更新（非同步，失敗不影響本地）
+  callAPI({
+    action:         'update_item_verdict',
+    child_id:       state.childId,
+    token:          state.token,
+    item_id:        state.currentItem.item_id,
+    manual_verdict: reviewSelectedVerdict
+  }).catch(() => {}); // 靜默失敗，本地優先
+
+  closeReviewModal();
+
+  // 重新渲染詳細頁
+  const verdictMap = { safe: '✅ 安全', caution: '⚠️ 注意', unsafe: '🚫 不適合' };
+  const manualBar  = document.getElementById('manual-verdict-bar');
+  const manualText = document.getElementById('manual-verdict-text');
+  manualBar.style.display = 'flex';
+  manualText.textContent  = verdictMap[reviewSelectedVerdict];
+
+  // badge 更新為人工結果
+  const badge = document.getElementById('detail-verdict-badge');
+  badge.textContent = verdictMap[reviewSelectedVerdict];
+  badge.className   = `verdict-badge ${reviewSelectedVerdict}`;
+
+  // 更新 detail-info
+  const infoEl = document.getElementById('detail-info');
+  if (infoEl) {
+    const note = state.currentItem.note;
+    infoEl.innerHTML = `
+      <div>📅 判斷時間：${fmtDate(state.currentItem.created_at)}</div>
+      <div>✏️ 已人工確認</div>
+      ${note ? `<div>💬 備註：${esc(note)}</div>` : ''}
+    `;
+  }
+
+  renderItemsList();  // 主列表同步更新
+  updateStats();
+  showToast(`人工確認已儲存：${verdictMap[reviewSelectedVerdict]} ✅`);
 }
 
 // ── 初始化 ────────────────────────────────────────
@@ -1677,5 +2113,27 @@ document.getElementById('input-item-name').addEventListener('keydown', e => {
 // ── 啟動 ─────────────────────────────────────────
 init();
 </script>
+<!-- 覆核 Modal -->
+<div class="modal-overlay" id="review-modal">
+  <div class="modal-sheet">
+    <div class="modal-title">✏️ 人工確認判斷</div>
+    <div class="review-options" id="review-options">
+      <button class="review-option" data-verdict="safe" onclick="selectReview(this)">
+        ✅ 安全　可以給寶貝使用
+      </button>
+      <button class="review-option" data-verdict="caution" onclick="selectReview(this)">
+        ⚠️ 注意　需要大人陪同或注意事項
+      </button>
+      <button class="review-option" data-verdict="unsafe" onclick="selectReview(this)">
+        🚫 不適合　這個不適合我的寶貝
+      </button>
+    </div>
+    <button class="btn-confirm-review" id="btn-confirm-review" onclick="confirmReview()">
+      確認儲存
+    </button>
+    <button class="btn-cancel-review" onclick="closeReviewModal()">取消</button>
+  </div>
+</div>
+
 </body>
 </html>
