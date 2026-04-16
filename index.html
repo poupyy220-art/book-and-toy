@@ -2059,8 +2059,8 @@ function renderAIResult(ai) {
     language_output: '語言輸出',  word_mapping:  '詞彙對應',
     social_language: '社交語言'
   };
-  if (ai.devAbilities && ai.devAbilities.length > 0) {
-    devChips.innerHTML = ai.devAbilities
+  if (ai.core_skills && ai.core_skills.length > 0) {
+    devChips.innerHTML = ai.core_skills
       .map(a => `<span class="dev-chip chip-${a}">${abilityLabel[a] || a}</span>`)
       .join('');
     devRow.style.display = 'block';
@@ -2071,15 +2071,15 @@ function renderAIResult(ai) {
   // ── 適配程度 ──────────────────────────────────────
   const fitRow = document.getElementById('fit-level-row');
   const fitBar = document.getElementById('fit-bar');
-  if (ai.fitLevel) {
+  if (ai.fit_level) {
     const fitMeta = {
       '偏簡單': { cls: 'simple',  icon: '💤', label: '偏簡單' },
       '適中':   { cls: 'mid',     icon: '✅', label: '適中'   },
       '可進階': { cls: 'advance', icon: '🚀', label: '可進階' }
     };
-    const fm = fitMeta[ai.fitLevel] || fitMeta['適中'];
+    const fm = fitMeta[ai.fit_level] || fitMeta['適中'];
     fitBar.className = `fit-bar ${fm.cls}`;
-    fitBar.innerHTML = `<span>${fm.icon}</span><span><b>${fm.label}</b>　${esc(ai.fitReason || '')}</span>`;
+    fitBar.innerHTML = `<span>${fm.icon}</span><span><b>${fm.label}</b>　${esc(ai.fit_reason || '')}</span>`;
     fitRow.style.display = 'block';
   } else {
     fitRow.style.display = 'none';
@@ -2087,10 +2087,10 @@ function renderAIResult(ai) {
 
   // ── 分階玩法 ──────────────────────────────────────
   const playLevels = document.getElementById('play-levels');
-  if (ai.play_l1 || ai.play_l2 || ai.play_l3) {
-    document.getElementById('play-l1-text').textContent = ai.play_l1 || '-';
-    document.getElementById('play-l2-text').textContent = ai.play_l2 || '-';
-    document.getElementById('play-l3-text').textContent = ai.play_l3 || '-';
+  if (ai.level_1_play || ai.level_2_play || ai.level_3_play) {
+    document.getElementById('play-l1-text').textContent = ai.level_1_play || '-';
+    document.getElementById('play-l2-text').textContent = ai.level_2_play || '-';
+    document.getElementById('play-l3-text').textContent = ai.level_3_play || '-';
     playLevels.style.display = 'block';
   } else {
     playLevels.style.display = 'none';
@@ -2099,19 +2099,19 @@ function renderAIResult(ai) {
   // ── 購買建議 ──────────────────────────────────────
   const buyRow = document.getElementById('buy-verdict-row');
   const buyBar = document.getElementById('buy-verdict-bar');
-  if (ai.buyVerdict) {
+  if (ai.buy_advice) {
     const buyMeta = {
       '值得購買': { cls: 'buy',   icon: '🛒', label: '值得購買' },
       '可選':     { cls: 'maybe', icon: '🤔', label: '可選'     },
-      '不必要':   { cls: 'skip',  icon: '⏭️', label: '不必要'   }
+      '不建議購買': { cls: 'skip',  icon: '⏭️', label: '不建議購買' }
     };
-    const bm = buyMeta[ai.buyVerdict] || buyMeta['可選'];
+    const bm = buyMeta[ai.buy_advice] || buyMeta['可選'];
     buyBar.className = `buy-verdict-bar ${bm.cls}`;
     buyBar.innerHTML = `
       <span class="buy-verdict-icon">${bm.icon}</span>
       <div class="buy-verdict-body">
         <span class="buy-verdict-label">${bm.label}</span>
-        <span class="buy-verdict-reason">${esc(ai.buyReason || '')}</span>
+        <span class="buy-verdict-reason">${esc(ai.buy_reason || '')}</span>
       </div>`;
     buyRow.style.display = 'block';
   } else {
