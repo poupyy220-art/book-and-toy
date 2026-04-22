@@ -2477,36 +2477,57 @@ function openDetailItem(item) {
  * 2. 顯示預覽
  * 3. 存入 state.selectedPhoto
  */
+/**
+ * 修改後的圖片處理：增加自動壓縮與尺寸調整
+ */
 function handlePhotoSelect(event) {
   const file = event.target.files[0];
   if (!file) return;
 
-  // 限制大小 10MB（Claude API 上限）
-  if (file.size > 10 * 1024 * 1024) {
-    showToast('圖片太大，請選 10MB 以下的圖片');
-    return;
-  }
-
   const reader = new FileReader();
   reader.onload = (e) => {
-    const dataUrl   = e.target.result;
-    const base64    = dataUrl.split(',')[1];
-    const mediaType = file.type || 'image/jpeg';
+    const img = new Image();
+    img.onload = () => {
+      // ── 壓縮邏輯 ──
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+      const MAX_SIZE = 1024; // 限制最大邊長為 1024px
 
-    // 儲存到 state
-    state.selectedPhoto = { base64, mediaType };
+      if (width > height) {
+        if (width > MAX_SIZE) {
+          height *= MAX_SIZE / width;
+          width = MAX_SIZE;
+        }
+      } else {
+        if (height > MAX_SIZE) {
+          width *= MAX_SIZE / height;
+          height = MAX_SIZE;
+        }
+      }
 
-    // 顯示預覽
-    const preview = document.getElementById('photo-preview');
-    const placeholder = document.getElementById('photo-placeholder');
-    preview.src = dataUrl;
-    preview.style.display = 'block';
-    placeholder.style.display = 'none';
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
 
-    // 顯示操作列
-    document.getElementById('photo-actions').style.display = 'flex';
+      // 轉換為較小的 JPEG，品質設定為 0.7
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+      const base64 = compressedDataUrl.split(',')[1];
 
-    showToast('圖片已選取，可以開始 AI 判斷 ✅');
+      state.selectedPhoto = { base64, mediaType: 'image/jpeg' };
+
+      // 顯示預覽
+      const preview = document.getElementById('photo-preview');
+      const placeholder = document.getElementById('photo-placeholder');
+      preview.src = compressedDataUrl;
+      preview.style.display = 'block';
+      placeholder.style.display = 'none';
+      document.getElementById('photo-actions').style.display = 'flex';
+      
+      showToast('圖片已優化壓縮 ✅');
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
