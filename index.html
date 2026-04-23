@@ -1619,7 +1619,7 @@ console.error = function(...args) {
 };
 
 // ── 設定 ──────────────────────────────────────────
-const API_URL = 'https://script.google.com/macros/s/AKfycbwwhtjPgPif1mOLSyifEeSL26-OGuzCikyl7z9FBBuL1TFwbjsS1CnBld7g_VrRlZJnWw/exec';
+const API_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
 // ⚠️ 替換成你的 GAS Web App URL
 
 // ── AI API 設定（雙 API 自動切換）─────────────────────
@@ -1843,36 +1843,29 @@ async function callAI(promptText, photo = null) {
     try {
       return await callAIviaGAS(promptText, photo);
     } catch (err) {
-      console.warn('[GAS AI 失敗，嘗試直連]', err.message);
-      // GAS 失敗時降級到直連（如果有設定本機 Key）
+      console.warn('[GAS AI 失敗]', err.message);
+      // GAS 有設定但失敗 → 顯示錯誤，不降級直連（Safari 不支援直連）
+      throw new Error('GAS 呼叫失敗：' + err.message);
     }
   }
 
-  // ── 備用：直接呼叫 API（需要設定頁填入 Key）────────────
+  // GAS 未設定 → 嘗試直連（僅限非 Safari 環境）
   const anthropicKey = localStorage.getItem('toy_anthropic_key') || '';
   const openaiKey    = localStorage.getItem('toy_openai_key')    || '';
 
-  if (anthropicKey) {
-    try {
-      return await callAnthropic(promptText, photo, anthropicKey);
-    } catch (err) {
-      console.error('[Anthropic 失敗]', err.message);
-      if (openaiKey) return await callOpenAI(promptText, photo, openaiKey);
-      throw err;
-    }
-  }
-  if (openaiKey) {
-    return await callOpenAI(promptText, photo, openaiKey);
+  if (anthropicKey || openaiKey) {
+    showToast('⚠️ iPhone Safari 不支援直連，請確認 GAS 設定');
+    throw new Error('Safari 不支援直連 API');
   }
 
   // 都沒設定
-  showToast('⚠️ 請在設定頁填入 API Key，或確認 GAS 已設定');
-  setTimeout(() => { openSettings(); showScreen('screen-settings'); }, 800);
+  showToast('⚠️ 請確認 GAS 已設定 API Key');
   throw new Error('NO_API_KEY');
 }
 
 /** 透過 GAS 中間層呼叫 AI（Key 藏在 GAS Script Properties）*/
 async function callAIviaGAS(promptText, photo) {
+  console.error('[GAS] 呼叫中，URL:', API_URL.slice(0,60) + '...');
   const payload = {
     action:    'ai_analyze',
     child_id:  state.childId,
@@ -1885,6 +1878,9 @@ async function callAIviaGAS(promptText, photo) {
     payload.mediaType = photo.mediaType;
   }
 
+  // 診斷：確認 API_URL 格式
+  console.error('[GAS URL]', API_URL.slice(0,80));
+
   const res = await fetch(API_URL, {
     method:   'POST',
     redirect: 'follow',
@@ -1892,9 +1888,17 @@ async function callAIviaGAS(promptText, photo) {
     body:     JSON.stringify(payload)
   });
 
-  if (!res.ok) throw new Error('GAS HTTP ' + res.status);
+  console.error('[GAS 回應狀態]', res.status, res.ok);
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => '');
+    throw new Error('GAS HTTP ' + res.status + ': ' + errText.slice(0,150));
+  }
   const data = await res.json();
-  if (!data.success) throw new Error(data.error || 'GAS AI 失敗');
+  console.error('[GAS 回傳]', JSON.stringify(data).slice(0,200));
+  if (!data.success) {
+    throw new Error('GAS 錯誤: ' + (data.error || '未知'));
+  }
   return data.result;
 }
 
@@ -2102,39 +2106,21 @@ ${ageInfo && ageInfo.totalMonths > 36 ? '發展特徵：學前期，創意想像
     renderRepeatAnalysis(aiData); // 重複購買分析
 
   } catch (err) {
-    // Fallback Demo 結果（API 未連接時使用，採用新格式）
-    const itemNameForDemo = name || '這個玩具';
-    const demo = {
-      name:             itemNameForDemo,
-      verdict:          '安全',
-      score:            '⭐⭐⭐⭐',
-      development_tags: ['感官', '精細動作', '認知'],
-      core_skills:      ['手眼協調', '精細抓握', '空間配置'],
-      safety_reason:    `「${itemNameForDemo}」一般適合幼兒使用，無明顯安全疑慮`,
-      detail:           `「${itemNameForDemo}」以感官探索和精細動作為主要發展價值，適合搭配語言引導增加互動深度`,
-      ageMatch:         '適中',
-      concerns:         [],
-      fit_level:        '適中',
-      fit_reason:       '符合該月齡發展需求',
-      level_1_play:     ['直接拿取把玩、觀察形狀顏色', '用手指觸摸感受材質'],
-      level_2_play:     ['大人命名：「這是圓形，這是藍色」', '引導分類：把一樣的放在一起'],
-      level_3_play:     ['假裝遊戲：「小熊要睡覺了，蓋棉被」', '說故事：「這個去哪裡旅行？」'],
-      repeat_score:     0,
-      repeat_level:     '低',
-      repeat_with:      [],
-      buy_advice:       '可選',
-      buy_reason:       '（Demo 模式，請連接 API 取得真實分析）',
-      alternative:      { direction: '補充語言互動類玩具', example: ['圖卡', '繪本'] },
-      tip:              '上傳清晰圖片並填入名稱，可獲得更精準的 AI 分析',
-      emoji:            '🧸',
-      itemName:         itemNameForDemo,
-      confidence:       '低',
-      confidenceReason: 'Demo 模式，未連接 API'
-    };
-    state.aiResult = demo;
-    renderAIResult(demo);
-    renderRepeatAnalysis(demo);
-    showToast('⚠️ Demo 模式（未填入 API Key）');
+    // 顯示真實錯誤，讓使用者知道問題在哪
+    const errMsg = err.message || '未知錯誤';
+    console.error('[analyzeItem 失敗]', errMsg);
+    showToast('❌ ' + errMsg.slice(0, 60));
+
+    // 把詳細錯誤顯示在 debug panel
+    const dbgLines = document.getElementById('debug-lines');
+    const dbgPanel = document.getElementById('debug-panel');
+    if (dbgLines && dbgPanel) {
+      dbgPanel.style.display = 'block';
+      const div = document.createElement('div');
+      div.className = 'debug-line';
+      div.textContent = '❌ AI 失敗: ' + errMsg;
+      dbgLines.appendChild(div);
+    }
   }
 
   document.getElementById('btn-analyze').disabled = false;
@@ -2477,57 +2463,36 @@ function openDetailItem(item) {
  * 2. 顯示預覽
  * 3. 存入 state.selectedPhoto
  */
-/**
- * 修改後的圖片處理：增加自動壓縮與尺寸調整
- */
 function handlePhotoSelect(event) {
   const file = event.target.files[0];
   if (!file) return;
 
+  // 限制大小 10MB（Claude API 上限）
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('圖片太大，請選 10MB 以下的圖片');
+    return;
+  }
+
   const reader = new FileReader();
   reader.onload = (e) => {
-    const img = new Image();
-    img.onload = () => {
-      // ── 壓縮邏輯 ──
-      const canvas = document.createElement('canvas');
-      let width = img.width;
-      let height = img.height;
-      const MAX_SIZE = 1024; // 限制最大邊長為 1024px
+    const dataUrl   = e.target.result;
+    const base64    = dataUrl.split(',')[1];
+    const mediaType = file.type || 'image/jpeg';
 
-      if (width > height) {
-        if (width > MAX_SIZE) {
-          height *= MAX_SIZE / width;
-          width = MAX_SIZE;
-        }
-      } else {
-        if (height > MAX_SIZE) {
-          width *= MAX_SIZE / height;
-          height = MAX_SIZE;
-        }
-      }
+    // 儲存到 state
+    state.selectedPhoto = { base64, mediaType };
 
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
+    // 顯示預覽
+    const preview = document.getElementById('photo-preview');
+    const placeholder = document.getElementById('photo-placeholder');
+    preview.src = dataUrl;
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
 
-      // 轉換為較小的 JPEG，品質設定為 0.7
-      const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-      const base64 = compressedDataUrl.split(',')[1];
+    // 顯示操作列
+    document.getElementById('photo-actions').style.display = 'flex';
 
-      state.selectedPhoto = { base64, mediaType: 'image/jpeg' };
-
-      // 顯示預覽
-      const preview = document.getElementById('photo-preview');
-      const placeholder = document.getElementById('photo-placeholder');
-      preview.src = compressedDataUrl;
-      preview.style.display = 'block';
-      placeholder.style.display = 'none';
-      document.getElementById('photo-actions').style.display = 'flex';
-      
-      showToast('圖片已優化壓縮 ✅');
-    };
-    img.src = e.target.result;
+    showToast('圖片已選取，可以開始 AI 判斷 ✅');
   };
   reader.readAsDataURL(file);
 }
